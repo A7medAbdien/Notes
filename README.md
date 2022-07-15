@@ -1,12 +1,11 @@
-# start server
+# Odoo
 
 The videos used:
 
 1. [installation](https://youtu.be/eD12tbz6BC4)
 2. [setup the environment](https://youtu.be/LS8tdWoiOQQ)
 
-
-## usefull commands
+## Usefully commands
 
 `python odoo-bin -d odoo15 -r odoo -w odoo`
 
