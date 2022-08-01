@@ -5,6 +5,8 @@ The videos:
 1. [installation](https://youtu.be/eD12tbz6BC4)
 2. [setup the environment](https://youtu.be/LS8tdWoiOQQ)
 
+* could to try [it](https://youtu.be/XBR_hcwY0HE)
+
 ## Usefully commands
 
 `python odoo-bin -d odoo15 -r odoo -w odoo`
@@ -149,3 +151,257 @@ Too see the changes:
 __NOTE:__ to get an existing action go for it works and from the debugging icon, edit action
 
 __Important:__ must create any menuitem that uses an action, after their action. So we the `Patients` menuitem will be moved to `patient.xml`, because the execution start in manifest in the data object executing them one by one, so when it executes the `menu.xml` will find a menuitem that has an action that still didn't created, causing an error.
+
+### 7. security rights
+
+in custom_addons\hospital\security\ir.model.access.csv
+
+```csv
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+hospital.access_hospital_patient,access_hospital_patient,hospital.model_hospital_patient,base.group_user,1,1,1,1
+```
+
+### 8. set menu icon
+
+install web_responsive and add int to custom_addons
+
+in custom_addons\hospital\views\menu.xml edited to be
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hospital_main" name="Hospital" sequence="0" web_icon="hospital,static\description\icon.png" />
+  <menuitem id="menu_patient_main" name="Patient Details" sequence="0" parent="menu_hospital_main" />
+</odoo>
+```
+
+then uninstall the model in the app list not the custom_addons
+
+### 9+10. create tree and form view
+
+__NOTICE__ that here we will add here a filed called ref in the patient model, copy name filed and change its name to ref with string value Reference. (in custom_addons\hospital\models\patient.py)
+
+```py
+ref = fields.Char(string="Recreance")
+```
+
+in custom_addons\hospital\views\patient_view.xml add this after `<odoo>`
+
+```xml
+
+  <record model="ir.ui.view" id="view_hospital_patient_tree">
+    <field name="name">hospital patient</field>
+    <field name="model">hospital.patient</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name" string="Patient Name" />
+        <field name="ref" />
+        <field name="age" />
+        <field name="gender" />
+      </tree>
+    </field>
+  </record>
+
+
+  <record model="ir.ui.view" id="view_hospital_patient_form">
+    <field name="name">hospital patient</field>
+    <field name="model">hospital.patient</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <group>
+              <field name="name" />
+              <field name="age" />
+            </group>
+            <group>
+              <field name="gender" />
+              <field name="ref" />
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+```
+
+### 11. add search view
+
+in custom_addons\hospital\views\patient_view.xml add this after form view
+
+```xml
+  <record model="ir.ui.view" id="view_hospital_patient_search">
+    <field name="name">hospital patient</field>
+    <field name="model">hospital.patient</field>
+    <field name="arch" type="xml">
+      <search string='test'>
+        <field name="name" string="Patient Name" filter_domain="['|',('name', 'ilike', self),('ref', 'ilike', self)]" />
+        <field name="age" />
+        <field name="gender" />
+      </search>
+    </field>
+  </record>
+```
+
+__NOTES__:
+
+* in filter_domain to have more than oen or condition,'|', add another '|' and add the condition
+  * filter_domain="['|','|',('name', 'ilike', self),('anotherValue', 'ilike', self),('ref', 'ilike', self)]"
+
+### 12. add filter and search view
+
+__NOTES__:
+
+1. separator to not allow the or operation, when u select more than one filter
+2. '&lt;' means less than,'<'.
+
+```xml
+  <record model="ir.ui.view" id="view_hospital_patient_search">
+    <field name="name">hospital patient</field>
+    <field name="model">hospital.patient</field>
+    <field name="arch" type="xml">
+      <search string='test'>
+        <field name="name" string="Patient Name" filter_domain="['|',('name', 'ilike', self),('ref', 'ilike', self)]" />
+        <field name="age" />
+        <field name="gender" />
+        <filter string="Male" name="filter_male" domain="[('gender','=','male')]" />
+        <filter string="Female" name="filter_female" domain="[('gender','=','female')]" />
+        <separator />
+        <filter string="Kids" name="filter_kids" domain="[('age','&lt;=','5')]" />
+        <group expand="0" string="Group By">
+          <filter string="Gender" name="group_by_gender" context="{'group_by':'gender'}" />
+        </group>
+      </search>
+    </field>
+  </record>
+```
+
+### 13. archive and not
+
+in custom_addons\hospital\models\patient.py add active filed
+
+```py
+    active = fields.Boolean(string="Active", default=True)
+    age = fields.Integer(string="Age")
+    # list with tubules (key,value)
+    gender = fields.Selection(
+        [('male', 'Male'), ('female', 'Female')], string="Gender")
+    name = fields.Char(string="Name")
+```
+
+in custom_addons\hospital\views\patient_view.xml add active filed
+
+in form record
+
+```xml
+<group>
+  <field name="gender" />
+  <field name="ref" />
+  <field name="active" invisible="1" />
+</group>
+```
+
+in search record
+
+```xml
+<separator />
+<filter string="Kids" name="filter_kids" domain="[('age','&lt;=','5')]" />
+<separator />
+<filter string="Archive" name="filter_archive" domain="[('active','=',False)]" />
+```
+
+## 14. Apply domain for a menu
+
+1. model will be from patient.hospital
+2. view:
+
+   ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <odoo>
+
+      <record id="action_hospital_female_patient" model="ir.actions.act_window">
+        <field name="name">Female Patients</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hospital.patient</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="domain">[('gender','=','female')]</field>
+        <field name="help" type='html'>
+          <p class='o_view_nocontent_smiling_face'>
+                Create your first patient!
+          </p>
+        </field>
+      </record>
+
+      <menuitem id="menu_female_patient_details" name="Female Patients" action="action_hospital_female_patient" parent="menu_patient_main" />
+    </odoo>
+   ```
+
+3. add it to the custom_addons\hospital\_*manifest*_.py
+
+  ```py
+  'data': [
+        'security/ir.model.access.csv',
+        'views/menu.xml',
+        'views/patient_view.xml',
+        'views/female_patient_view.xml',
+    ],
+  ```
+
+## 15. Set Default Value Using Context
+
+in view, custom_addons\hospital\views\female_patient_view.xml
+
+```xml
+<field name="context">{"default_gender":"female","default_age":"20"}</field>
+```
+
+rather than keeping it empty
+
+## 16. Set Default filter Using Context
+
+in view, custom_addons\hospital\views\patient_view.xml
+
+```xml
+<field name="context">{'search_default_filter_male':1,'search_default_group_by_gender':1}</field>
+```
+
+## 17. Adding chatter
+
+1. in custom_addons\hospital\_*manifest*_.py
+
+   ```py
+   'depends': ['mail'],
+   ```
+
+2. in custom_addons\hospital\models\patient.py
+
+   ```py
+    _name = "hospital.patient"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _description = "Hospital Patient"
+   ```
+
+3. in custom_addons\hospital\views\patient_view.xml
+
+  ```xml
+  <div class="oe_chatter">
+    <field name="message_follower_ids" widget="mail_followers" />
+    <field name="activity_ids" widget="mail_activity" />
+    <field name="message_ids" widget="mail_thread" />
+  </div>
+  ```
+
+## 18. Enable Tracking For Fields to show in the chatter
+
+in custom_addons\hospital\models\patient.py add tracking attribute
+
+```py
+active = fields.Boolean(string="Active", default=True)
+age = fields.Integer(string="Age", tracking=True)
+# list with tubules (key,value)
+gender = fields.Selection(
+    [('male', 'Male'), ('female', 'Female')], string="Gender", tracking=True)
+name = fields.Char(string="Name", tracking=True)
+```
