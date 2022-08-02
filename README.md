@@ -35,10 +35,10 @@ The videos:
 each model is a table in the database contain whatever data, customer, sales history...etc
 
 1. create a directory "models"
-2. create the "__init__.py" file
+2. create the "_\_init__.py" file
 3. create a file "patient.py"
-4. in the main "__init__.py" add `from . import models`
-5. in the models/__init__.py add `from . import patient`
+4. in the main "_\_init__.py" add `from . import models`
+5. in the models/_\_init__.py add `from . import patient`
 
 In the patient.py:
 
@@ -405,3 +405,148 @@ gender = fields.Selection(
     [('male', 'Male'), ('female', 'Female')], string="Gender", tracking=True)
 name = fields.Char(string="Name", tracking=True)
 ```
+
+## 19. Add searchpanel
+
+in search tag in patient_view.xml
+
+```xml
+<searchpanel>
+  <field name="gender" enable_conter="1" />
+</searchpanel>
+</search>
+```
+
+## 20. Add Many2one Field
+
+1. create model file, custom_addons\hospital\models\appointment.py
+
+   ```py
+   from odoo import models, fields, api
+
+    class HospitalAppointment(models.Model):
+        # that will create a table with name "hospital_appointment"
+        _name = "hospital.appointment"
+        _inherit = ['mail.thread', 'mail.activity.mixin']
+        _description = "Hospital Appointment"
+
+        patient_id = fields.Many2one('hospital.patient', 'Patient')
+
+   ```
+
+2. add it to init in model dir, custom_addons\hospital\models\_*init*_.py
+
+    ```py
+    from . import models
+    from . import patient
+    from . import appointment
+   ```
+
+3. crete view (where we add the many2one field), custom_addons\hospital\views\appointment_view.xml
+
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <odoo>
+
+      <record model="ir.ui.view" id="view_hospital_appointment_tree">
+        <field name="name">hospital appointment</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+          <tree></tree>
+        </field>
+      </record>
+
+
+      <record model="ir.ui.view" id="view_hospital_appointment_form">
+        <field name="name">hospital appointment</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+          <form>
+            <sheet>
+              <group>
+                <group>
+                  <field name="patient_id" />
+                </group>
+                <group></group>
+              </group>
+            </sheet>
+
+            <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" />
+              <field name="activity_ids" widget="mail_activity" />
+              <field name="message_ids" widget="mail_thread" />
+            </div>
+
+          </form>
+        </field>
+      </record>
+
+
+      <record id="action_hospital_appointment" model="ir.actions.act_window">
+        <field name="name">appointments</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type='html'>
+          <p class='o_view_nocontent_smiling_face'>
+                Create your first appointment!
+          </p>
+        </field>
+      </record>
+
+      <menuitem id="menu_appointment_details" name="Appointments" action="action_hospital_appointment" parent="menu_patient_main" />
+    </odoo>
+    ```
+
+4. add it to manifest, custom_addons\hospital\_*manifest*_.py
+
+   ```py
+      # -*- coding: utf-8 -*-
+
+    {
+      'name': "hospital",
+      "application": True,
+      "sequence": -101,
+      'summary': """
+          Short (1 phrase/line) summary of the module's purpose, used as
+          subtitle on modules listing or apps.openerp.com""",
+
+      'description': """
+          Long description of module's purpose
+      """,
+
+      'author': "My Company",
+      'website': "http://www.yourcompany.com",
+
+      # Categories can be used to filter modules in modules listing
+      # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
+      # for the full list
+      'category': 'Uncategorized',
+      'version': '0.1',
+
+      # any module necessary for this one to work correctly
+      'depends': ['mail'],
+
+      # always loaded
+      'data': [
+          'security/ir.model.access.csv',
+          'views/menu.xml',
+          'views/patient_view.xml',
+          'views/appointment_view.xml',
+          'views/female_patient_view.xml',
+      ],
+      # only loaded in demonstration mode
+      'demo': [
+          'demo/demo.xml',
+      ],
+    }
+   ```
+
+5. edit the security access
+
+   ```py
+    id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+    hospital.access_hospital_patient,access_hospital_patient,hospital.model_hospital_patient,base.group_user,1,1,1,1
+    hospital.access_hospital_appointment,access_hospital_appointment,hospital.model_hospital_appointment,base.group_user,1,1,1,1
+   ```
