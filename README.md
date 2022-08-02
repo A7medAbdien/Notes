@@ -254,7 +254,7 @@ __NOTES__:
 __NOTES__:
 
 1. separator to not allow the or operation, when u select more than one filter
-2. "&lt;" means less than,'<'.
+2. &lt; means less than,'<'.
 
 ```xml
   <record model="ir.ui.view" id="view_hospital_patient_search">
