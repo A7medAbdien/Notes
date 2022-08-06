@@ -414,7 +414,6 @@ in search tag in patient_view.xml
 <searchpanel>
   <field name="gender" enable_conter="1" />
 </searchpanel>
-</search>
 ```
 
 ## 20. Add Many2one Field
@@ -550,3 +549,35 @@ in search tag in patient_view.xml
     hospital.access_hospital_patient,access_hospital_patient,hospital.model_hospital_patient,base.group_user,1,1,1,1
     hospital.access_hospital_appointment,access_hospital_appointment,hospital.model_hospital_appointment,base.group_user,1,1,1,1
    ```
+
+## 21+22. add date and datetime with default value
+
+__carful:__ Date and Datetime not date and datetime
+
+in custom_addons\hospital\models\appointment.py
+
+```py
+appointment_time = fields.Datetime(
+        string="Appointment Time", default=fields.Datetime.now)
+booking_date = fields.Date(
+    string="Booking Date", default=fields.Date.context_today)
+```
+
+in custom_addons\hospital\views\appointment_view.xml under the patient_id
+
+```xml
+<field name="appointment_time" />
+<field name="booking_date" />
+```
+
+## 23. Add Related Field
+
+in custom_addons\hospital\models\appointment.py
+
+```py
+gender = fields.Selection(related="patient_id.gender", readonly=True)
+```
+
+__notice:__ readonly if False will allow to make change to the value and it is by default True in the related field
+
+## 24. Add Computed Field
