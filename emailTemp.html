@@ -1,0 +1,88 @@
+<table border="0" cellpadding="0" cellspacing="0"
+    style="box-sizing:border-box;padding-top: 16px; background-color: #FFFFFF; font-family:Verdana, Arial,sans-serif; color: #454748; width: 100%; border-collapse:separate;"
+    width="100%">
+    <tbody>
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="590"
+                    style="box-sizing:border-box;padding: 16px; background-color: #FFFFFF; color: #454748; border-collapse:separate;">
+                    <tbody>
+                        <tr>
+                            <td align="center" style="min-width: 590px;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="590"
+                                    style="box-sizing:border-box;min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;">
+                                    <tbody>
+                                        <tr>
+                                            <td valign="middle">
+                                                <span style="font-size: 20px; font-weight: bold;">
+                                                    The <t t-out="object.name or ''" data-oe-t-inline="true"
+                                                        contenteditable="false">QuotationName</t> qualified
+                                                </span><br>
+                                            </td>
+                                            <td valign="middle" align="right">
+                                                <img t-attf-src="/logo.png?company={{ object.company_id.id }}"
+                                                    style="border-style:none;box-sizing:border-box;vertical-align:middle;padding: 0px; margin: 0px; height: 0px; width: 80px;"
+                                                    t-att-alt="object.company_id.name" width="80px" height="0">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="text-align:center;">
+                                                <hr width="100%"
+                                                    style="border-style:none;border-top-width:medium;border-left-width:medium;border-bottom-width:medium;border-right-width:medium;overflow-y:visible;overflow-x:visible;height:0px;box-sizing:content-box;background-color:#cccccc;border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;"
+                                                    contenteditable="false">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <!-- CONTENT -->
+                        <tr>
+                            <td align="center" style="min-width: 590px;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="590"
+                                    style="box-sizing:border-box;min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;">
+                                    <tbody>
+                                        <tr>
+                                            <td valign="top" style="font-size: 15px;">
+                                                <div>
+                                                    Dear <t t-out="object.partner_id.name or ''" data-oe-t-inline="true"
+                                                        contenteditable="false">PartnerName</t>,<br><br>
+
+                                                    Your Quotation, <t t-out="object.name or ''" data-oe-t-inline="true"
+                                                        contenteditable="false">QuotationName</t>, with <t
+                                                        t-out="object.company_id.name or ''" data-oe-t-inline="true"
+                                                        contenteditable="false">CompanyName</t> created by <t
+                                                        t-out="object.create_uid.name or ''" data-oe-t-inline="true"
+                                                        contenteditable="false">EmployeeName</t> have been qualified.
+
+                                                    </b><br><br>
+
+                                                    <h4>Contact with:</h4>
+                                                    <li>
+                                                        <t t-out="object.create_uid.name or ''" data-oe-t-inline="true"
+                                                            style="text-transform: capitalize;" contenteditable="false">
+                                                            EmployeeName</t>, who you created this quotation
+                                                        with: <t t-out="object.create_uid.email or ''"
+                                                            data-oe-t-inline="true" contenteditable="false">
+                                                            EmployeeEmail</t>
+                                                    </li>
+                                                    <li>
+                                                        Our Company: <t t-out="object.company_id.email or ''"
+                                                            data-oe-t-inline="true" contenteditable="false">
+                                                            EmployeeEmail</t>
+                                                    </li>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+
+    </tbody>
+</table>

@@ -138,3 +138,64 @@ knowing the components will help to set the access right for each group
 
 * edit the access right of leads(Failed)
 * ask the community
+
+### the community Question
+
+I am new to odoo, and I am using the online version of odoo, which i think it is v15 enterprise (15 free trial).
+
+I am using only the CRM model. For my case, I have a manger with an "all documents" access rights and an employee with "only own documents".
+
+What I expected, Adding the employee to the follower list and sending an email, as a manager, to the employee. From the email, the employee can access the lead with the specified access rights, that can be edited from the UI.
+
+There are three cases:
+
+1. lead owned by the manger, follower is an employee (not working as expected)
+2. lead owned by an employee, follower is an other employee (not working as expected)
+3. lead owned by an employee, follower is the manager(Working as expected)
+
+The problem is that, the email that the employee reserves does not send him to the shared lead, it sends him to the discussion dashboard.
+
+So, I am trying to edit the access right of the Lead/Opportunity model to allow the follower to see leads they follow.
+In the Personal Leads record role,  I edited it to..
+
+`['|',('message_follower_ids','in',[user.id]),('user_id','in',(False,user.id))]`
+
+and it is not working.
+
+## Sun, 7 Aug
+
+1. followers can not see the sheared lead: (the company will take as it is)
+   1. manager cant invite employees (not that important)
+   2. employee cant invite employee (might effect if the team leader need to see others work)
+   3. employee can invite the manager (anyway he can see all leads :))
+2. finish the odoo tutorial 1 course
+3. dev videos 24->34
+4. send the quotation to the customer
+
+### send the quotation to the customer
+
+we can send the lead to the customer with some attached documents, we can edit the email and the sender from the email template
+
+## Mon, 8 Aug (Holyday)
+
+### Follower issue
+
+solution for followers can not see the followed leads,
+
+`['|',('message_is_follower','=',1),('user_id','in',(False,user.id))]`
+
+### Team leader issue
+
+solution for leader only see the team members leads, [here](https://github.com/odoo/odoo/issues/4682#issuecomment-237640104)
+with changing the record role to
+
+`['&', ('team_id.user_id','=',user.id), ('team_id.member_ids', 'in', [user.id])]` or
+`['|','|','|',('user_id','=',user.id),('user_id','=',False),('team_id.member_ids','in', [user.id]),('team_id.user_id','=',user.id)]`
+
+**NOTICE:** creating a new Sales team via the Configuration>Sales Team does not have any affect on the database, so create the team via Kanban view.
+
+Using Kanban view:
+
+1. Group the leads by Sales Team
+2. add a filed with the new Sales team name (create the Team)
+3. move the opportunity of a salesperson to the needed team (adding the salesperson to the team)

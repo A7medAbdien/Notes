@@ -66,8 +66,10 @@ Too see the changes:
 Another way
 
 1. `psql –U postgres`
-2. `\c odoo15` the database name
+2. `\c odoo` the database name
 3. `select * from hospital_patient` the model name
+
+Note: add a space at the begging of select statement
 
 ---
 
@@ -581,3 +583,33 @@ gender = fields.Selection(related="patient_id.gender", readonly=True)
 __notice:__ readonly if False will allow to make change to the value and it is by default True in the related field
 
 ## 24. Add Computed Field
+
+1. edit the age field
+2. add date of birth field(dob)
+3. crete the compute function
+4. comment the age filter, because the computed field does not store in the DB
+
+### in custom_addons\hospital\models\patient.py
+
+```py
+dob = fields.Date(string="Date of Birth")
+age = fields.Integer(string="Age", tracking=True, compute='_compute_age')
+# age = fields.Integer(string="Age", tracking=True, compute='_compute_age', store=True)
+
+@api.depends('dob')
+    def _compute_age(self):
+        print("self................", self)
+        for rec in self:
+            today = date.today()
+            if rec.dob:
+                rec.age = today.year - rec.dob.year
+            else:
+                rec.age = 1
+```
+
+### in custom_addons\hospital\views\patient_view.xml
+
+```xml
+<!-- <separator /> -->
+<!-- <filter string="Kids" name="filter_kids" domain="[('age','&lt;=','5')]" /> -->
+```
