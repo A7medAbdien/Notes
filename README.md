@@ -731,4 +731,18 @@ the one with user open the chat, the other not
 
 in html field in the appointment model, add `options="{'collaborative': true, 'resizable': true}"`
 
+## 44. Default Focus
 
+select the field that you want to be focused when the user start edit the record and add `default_focus='1'`, underscore
+
+```xml
+<field name="booking_date" default_focus="1" />
+```
+
+## 45. show sample data in the background when there is no data
+
+in tree field add `sample='1'`
+
+```xml
+<tree decoration-success="state =='done'" decoration-info="state =='draft'" decoration-danger="state=='in_consultation'" sample='1'>
+```
