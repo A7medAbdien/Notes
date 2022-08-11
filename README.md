@@ -613,3 +613,92 @@ age = fields.Integer(string="Age", tracking=True, compute='_compute_age')
 <!-- <separator /> -->
 <!-- <filter string="Kids" name="filter_kids" domain="[('age','&lt;=','5')]" /> -->
 ```
+
+## 25.onchange field
+
+1. add field that will show the change, in model file
+2. create the onchange function, in model file
+3. add it in view
+
+## 26. _rec_name
+
+1. it is what we see in the navigation bar!!
+2. what will be seen if we used this value in many2one field
+
+## 27. notebook
+
+under the sheet tag add `<notebook><page><group><field>`
+
+## 28. HTML field
+
+1. add it in the model
+2. add it in the view
+3. add placeholder attribute
+
+## 29. Remove Create, Edit, Delete and Duplicate Options From Views
+
+in from or tree tag add `crete='0'`
+
+this what i needed after editing the access rights of the employee to deny him from creating a quotation
+
+## 30. Priority Widget
+
+1. add new selection field in model
+2. add it to the view
+
+## 31. Status bar
+
+1. add new selection field in model
+2. add it to the view
+
+## 32+33+34. two types of buttons & confirmation massage & help massage
+
+1. action: to do a window action
+2. object: to run a python code
+
+in custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<button name="action_test" string="Object Button" type="object" class="oe_highlight" confirm='confirm massage' />
+<button name="%(hospital.action_hospital_patient)d" string="Action Button" type="action" class="oe_highlight" help='this will redirect u to patient' />
+```
+
+in custom_addons\hospital\models\appointment.py
+
+```py
+def action_test(self):
+  print('test!!!!!!!!!!!!!!!!!!!!')
+```
+
+## 35. add else in the computed fields
+
+## 36. rainbow effect
+
+in custom_addons\hospital\models\appointment.py
+
+```py
+def action_test(self):
+  print('test!!!!!!!!!!!!!!!!!!!!')
+  return {
+    'effect': {
+        'fadeout': 'slow',
+        'message': 'Printed',
+        'type': 'rainbow_man',
+    }
+  }
+```
+
+## 37+38. Badge Widget And Decorations & Color tree
+
+in the tree view custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<tree decoration-success="state =='done'" decoration-info="state =='draft'" decoration-danger="state=='in_consultation'">
+  <field name="state" widget='badge' decoration-success="state == 'done'" decoration-info="state =='draft'" decoration-danger="state=='in_consultation'" />
+```
+
+1. decoration-muted, gray
+2. decoration-info, blue
+3. decoration-success, green
+4. decoration-warning, yellow
+5. decoration-danger, red
