@@ -9,7 +9,7 @@ The videos:
 
 ## Usefully commands
 
-`python odoo-bin -d odoo15 -r odoo -w odoo`
+`python odoo-bin -d odoo -r odoo -w odoo`
 
 `python odoo-bin scaffold om_hospital addons\`
 
@@ -17,20 +17,20 @@ The videos:
 
 ## Notes from the [playlist](https://youtube.com/playlist?list=PLqRRLx0cl0hoZM788LH5M8q7KhiXPyuVU)
 
-### `__manifest__.py` file
+### 1. `__manifest__.py` file
 
 ```py
 "application": True,
 "sequence": -100,
 ```
 
-### Adding the icon
+### 2. Adding the icon
 
 1. create a directory "static"
 2. create a directory "description"
 3. add the image with name "icon" *the image will automatically added*
 
-### Creating Database Tables
+### 3. Creating Database Tables
 
 each model is a table in the database contain whatever data, customer, sales history...etc
 
@@ -702,3 +702,33 @@ in the tree view custom_addons\hospital\views\appointment_view.xml
 3. decoration-success, green
 4. decoration-warning, yellow
 5. decoration-danger, red
+
+## 39. Widget List Activity
+
+1. activity is in the models when we inherited the mail model
+2. just add it to the tree and activate the widget, in
+
+   ```xml
+   <field name="activity_ids" widget='list_activity' />
+   ```
+
+## 40. Optional Field Visibility In List View
+
+1. in tree view fields
+
+   ```xml
+   <field name="appointment_time" optional="show" />
+   ```
+
+## 41. many2one_avatar_user and many2one_avatar
+
+the one with user open the chat, the other not
+
+1. create field based on users of odoo domain
+2. add it to the view with `widget='many2one_avatar_user'`
+
+## 42+43. make field 'collaborative':true && 'resizable': true
+
+in html field in the appointment model, add `options="{'collaborative': true, 'resizable': true}"`
+
+
