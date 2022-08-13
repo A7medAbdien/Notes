@@ -25,6 +25,8 @@
 5. how the business get its customers (for lead management)
    * Ex: tack IP address of a visitor for the business website
 
+---
+
 ## Mon, 1 Aug
 
 following this [playlist](https://youtube.com/playlist?list=PLeJtXzTubzj8dSeQ6dVDOU4Rlh5AQbTFO)
@@ -75,6 +77,8 @@ following this [playlist](https://youtube.com/playlist?list=PLeJtXzTubzj8dSeQ6dV
 * any opp that is not assigned to anyone is shown for the admin by default
 * the assigning from who to whom is saved in chatter
 
+---
+
 ## Wed, 3 Aug
 
 I am trying to set a use case for the sales team, I have to..
@@ -97,6 +101,8 @@ knowing the components will help to set the access right for each group
 6. tags (all can see, create, edit)
 7. members-employees, only officer can edit
 8. pipeline structure, only administration
+
+---
 
 ## Thu, 4 Aug
 
@@ -121,6 +127,8 @@ knowing the components will help to set the access right for each group
 
 * quotation duration to send to client
 * lead time
+
+---
 
 ## Sat, 6 Aug
 
@@ -162,6 +170,8 @@ In the Personal Leads record role,  I edited it to..
 
 and it is not working.
 
+---
+
 ## Sun, 7 Aug
 
 1. followers can not see the sheared lead: (the company will take as it is)
@@ -175,6 +185,8 @@ and it is not working.
 ### send the quotation to the customer
 
 we can send the lead to the customer with some attached documents, we can edit the email and the sender from the email template
+
+---
 
 ## Mon, 8 Aug (Holyday)
 
