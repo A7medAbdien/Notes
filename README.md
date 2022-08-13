@@ -746,3 +746,42 @@ in tree field add `sample='1'`
 ```xml
 <tree decoration-success="state =='done'" decoration-info="state =='draft'" decoration-danger="state=='in_consultation'" sample='1'>
 ```
+
+---
+
+## 46. enable editing form tree view
+
+add to the tree view `multi_edit='1'`
+
+```xml
+<tree decoration-success="state =='done'" decoration-info="state =='draft'" decoration-danger="state=='in_consultation'" sample='1' multi_edit='1'>
+```
+
+## 47. change the state in the statusbar via a button
+
+* u could search in odoo for, action_done, action_cancel... etc
+
+1. add buttons in the view with type object
+2. create their object actions/methods
+3. set their states attribute, when they will be shown
+
+## 48. add hot keys for buttons
+
+add `data-hotkey='z'`, any letter available
+
+## 49. add One2Many field
+
+One2many in One from many
+
+One2many in appointment from pharmacy
+
+One -> appointment
+
+Many -> Pharmacy
+
+0. create the model, we want its many
+1. in pharmacy, add a Many2one field with the appointment
+2. in appointment, add One2many field and pass field from step 1
+3. add the pharmacy One2many field to the view
+4. create the tree and form view from one2 many field
+5. in this case the product model have been used so we need to add it to the depends in the manifest file
