@@ -837,3 +837,174 @@ pharmacy_lines_id = fields.One2many('appointment.pharmacy.lines', 'appointment_i
 ```py
 'depends': ['mail', 'product'],
 ```
+
+---
+
+## 50. editable attribute in the tree tag
+
+1. without the editable, when adding a new line will show a pop up of the form
+2. top, will fill the data at the top of the list/tree
+3. bottom, will fill the data at the bottom of the list/tree
+
+## 51. colum inviable based on value in the model, all xml
+
+1. add boolean field
+2. add attrs attribute to the field will be hidden
+3. add the condition of hide
+
+```xml
+</page>
+  <page string='Pharmacy'>
+    <field name="pharmacy_lines_id">
+      <tree editable='bottom'>
+        <field name="product_id" />
+        <field name="price_unit" attrs="{ 'column_invisible':[('parent.hide_sales_price','=',True)] }" />
+        <field name="qty" />
+      </tree>
+      <form>
+        <group>
+          <field name="product_id" />
+          <field name="price_unit" attrs="{ 'column_invisible':[('parent.hide_sales_price','=',True)] }" />
+          <field name="qty" />
+        </group>
+      </form>
+    </field>
+  </page>
+```
+
+## 52. show only in the developer mode
+
+add `groups="base.group_no_one"` to the field u wanna hide
+
+## 53. image field
+
+in custom_addons\hospital\models\patient.py
+
+```py
+image = fields.Image(string='Image')
+```
+
+in custom_addons\hospital\views\patient_view.xml
+
+```xml
+<sheet>
+  <field name="image" widget='image' class="oe_avatar" />
+  <group>
+    <group>
+      <field name="name" />
+      <field name="dob" />
+      <field name="age" />
+    </group>
+```
+
+## 54. create tags model and use boolean_toggle widget
+
+to create a model, will deal with 6 files:
+
+1. MyModel.py, patient_tag.py
+
+   ```py
+   from email.policy import default
+
+    from odoo import api, fields, models
+
+    class PatientTag(models.Model):
+        _name = 'patient.tag'
+        _description = 'Patient Tag'
+
+        name = fields.Char(
+            string='Name',
+            required=True
+        )
+        active = fields.Boolean(
+            string='Active',
+            default=True
+        )
+
+   ```
+
+2. my_view.xml, patient_tag_view.xml
+
+   ```xml
+    <?xml version='1.0' encoding='utf-8'?>
+    <odoo>
+      <record model="ir.ui.view" id="view_patient_tag_tree">
+        <field name="name">Patient Tags</field>
+        <field name="model">patient.tag</field>
+        <field name="arch" type="xml">
+          <tree sample='1'>
+            <field name="name" string="Tag Name" />
+          </tree>
+        </field>
+      </record>
+
+      <record model="ir.ui.view" id="view_patient_tag_form">
+        <field name="name">Patient Tags</field>
+        <field name="model">patient.tag</field>
+        <field name="arch" type="xml">
+          <form>
+            <sheet>
+              <group>
+                <group>
+                  <field name="name" />
+                </group>
+                <group>
+                  <field name="active" widget="boolean_toggle" />
+                </group>
+              </group>
+            </sheet>
+          </form>
+        </field>
+      </record>
+
+      <record id="action_patient_tag" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">patient.tag</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context"></field>
+        <field name="help" type='html'>
+          <p class='o_view_nocontent_smiling_face'>
+                Create your first tag!
+          </p>
+        </field>
+      </record>
+
+      <menuitem id="menu_patient_tag" name="Tags" action="action_patient_tag" parent="menu_configuration_main" />
+
+    </odoo>
+   ```
+
+3. menu.py
+
+   ```xml
+     <menuitem id="menu_configuration_main" name="Configuration" sequence="20" parent="menu_hospital_main" />
+   ```
+
+4. __init\__.py
+
+   ```py
+   from . import models
+   from . import patient
+   from . import appointment
+   from . import patient_tag
+   ```
+
+5. __manifest\__.py
+
+   ```py
+   'data': [
+        'security/ir.model.access.csv',
+        'views/menu.xml',
+        'views/patient_view.xml',
+        'views/appointment_view.xml',
+        'views/female_patient_view.xml',
+        'views/patient_tag_view.xml',
+    ],
+   ```
+
+6. ..access.csv
+
+   ```py
+   hospital.access_patient_tag,access_patient_tag,hospital.model_patient_tag,base.group_user,1,1,1,1
+   ```
