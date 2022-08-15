@@ -1008,3 +1008,98 @@ to create a model, will deal with 6 files:
    ```py
    hospital.access_patient_tag,access_patient_tag,hospital.model_patient_tag,base.group_user,1,1,1,1
    ```
+
+
+## 55->58 adding Many2many colored field
+
+1. create color field, two types:
+   1. char: more options
+   2. integer: some given colors
+2. add the fields to the view
+3. in patient.py add many2many field, will crete a separate table
+4. in patient view add many2many field, with options attribute and many2many_tag widget
+
+in custom_addons\hospital\models\patient_tag.py
+
+```py
+color = fields.Integer(
+    string='Color',
+)
+
+color2 = fields.Char(
+    string='Color2',
+)
+```
+
+in custom_addons\hospital\views\patient_tag_view.xml
+
+```xml
+<field name="color" widget="color" />
+<field name="color2" widget="color_picker" groups="base.group_no_one" />
+```
+
+in custom_addons\hospital\models\patient.py
+
+```py
+tag_ids = fields.Many2many(
+    string='Tag',
+    comodel_name='patient.tag'
+)
+```
+
+in tree and form view custom_addons\hospital\views\patient_view.xml
+
+```xml
+<field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" />
+```
+
+## 59. add activity view to the appointment
+
+1. create the view
+2. don't for get to add it to the `view_mode`
+
+```xml
+<record model="ir.ui.view" id="view_hospital_appointment_activity">
+  <field name="name">hospital.appointment.activity</field>
+  <field name="model">hospital.appointment</field>
+  <field name="arch" type="xml">
+    <activity string='Appointment'>
+      <field name="patient_id" />
+      <field name="ref" />
+      <templates>
+        <div t-name="activity-box">
+          <img t-att-src="activity_image('hospital.patient','image',record.patient_id.raw_value)" t-att-title="record.patient_id.value" t-att-alt="record.patient_id.value" />
+          <div>
+            <field name="ref" />
+          </div>
+        </div>
+      </templates>
+    </activity>
+  </field>
+</record>
+```
+
+```xml
+<record id="action_hospital_appointment" model="ir.actions.act_window">
+    <field name="name">Appointments</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">hospital.appointment</field>
+    <field name="view_mode">tree,form,activity</field>
+    <field name="context">{}</field>
+    <field name="help" type='html'>
+      <p class='o_view_nocontent_smiling_face'>
+            Create your first appointment!
+      </p>
+    </field>
+</record>
+```
+
+## 60. enable the html code
+
+suppose passing `codeview':true` in options attribute will make it work but for me it did not work
+
+in prescription field in custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<field name='prescription' placeholder='Enter prescription' options="{'collaborative': true, 'resizable': true,'codeview':true}" />
+```
