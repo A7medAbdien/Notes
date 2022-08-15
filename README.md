@@ -785,3 +785,55 @@ Many -> Pharmacy
 3. add the pharmacy One2many field to the view
 4. create the tree and form view from one2 many field
 5. in this case the product model have been used so we need to add it to the depends in the manifest file
+
+### pharmacy model at the end of custom_addons\hospital\models\appointment.py
+
+```py
+class AppointmentPharmacyLines(models.Model):
+    _name = 'appointment.pharmacy.lines'
+    _description = 'Appointment Pharmacy Lines'
+
+    product_id = fields.Many2one('product.product')
+    price_unit = fields.Float(string='Price')
+    qty = fields.Integer(string='Quantity')
+    appointment_id = fields.Many2one(
+        'hospital.appointment', string='Appointment')
+```
+
+### appointment model in custom_addons\hospital\models\appointment.py
+
+```py
+pharmacy_lines_id = fields.One2many('appointment.pharmacy.lines', 'appointment_id', string='Pharmacy Lines')
+```
+
+### in custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<notebook>
+  <page string="Prescription">
+    <field name='prescription' placeholder='Enter prescription' options="{'collaborative': true, 'resizable': true}" />
+  </page>
+  <page string='Pharmacy'>
+    <field name="pharmacy_lines_id">
+      <tree>
+        <field name="product_id" />
+        <field name="price_unit" />
+        <field name="qty" />
+      </tree>
+      <form>
+        <group>
+          <field name="product_id" />
+          <field name="price_unit" />
+          <field name="qty" />
+        </group>
+      </form>
+    </field>
+  </page>
+</notebook>
+```
+
+### in custom_addons\hospital\_*manifest*_.py
+
+```py
+'depends': ['mail', 'product'],
+```
