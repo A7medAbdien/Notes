@@ -1009,7 +1009,6 @@ to create a model, will deal with 6 files:
    hospital.access_patient_tag,access_patient_tag,hospital.model_patient_tag,base.group_user,1,1,1,1
    ```
 
-
 ## 55->58 adding Many2many colored field
 
 1. create color field, two types:
@@ -1102,4 +1101,128 @@ in prescription field in custom_addons\hospital\views\appointment_view.xml
 
 ```xml
 <field name='prescription' placeholder='Enter prescription' options="{'collaborative': true, 'resizable': true,'codeview':true}" />
+```
+
+## 61+62. transient model
+
+* for temporarily data usage
+
+1. create dir. wizard
+2. import wizard in main __init\__.py file
+3. create its own __init\__.py file
+4. create the my_model.py/cancel_appointment.py
+5. define it in the ..access.csv
+6. create my_model_wizard.xml/cancel_appointment_wizard.xml, will keep
+7. create the the menu window action, and keep it in menu.xml, because step 8
+8. add the relative path to __manifest\__.py, wizards added before the views and after security
+9. make the form as a pop up, `target`
+10. editing the default footer
+
+### init files
+
+custom_addons\hospital\wizard\_*init*_.py
+
+```py
+from . import cancel_appointment
+```
+
+custom_addons\hospital\_*init*_.py
+
+```py
+from . import controllers
+from . import models
+from . import wizard
+```
+
+### manifest file, they loaded by their order
+
+```py
+'data': [
+    'security/ir.model.access.csv',
+    'wizard/cancel_appointment_wizard.xml',
+    'views/menu.xml',
+    'views/patient_view.xml',
+    'views/appointment_view.xml',
+    'views/female_patient_view.xml',
+    'views/patient_tag_view.xml',
+]
+```
+
+### menu.py, custom_addons\hospital\views\menu.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hospital_main" name="Hospital" sequence="0" web_icon="hospital,static\description\icon.png" />
+  <menuitem id="menu_patient_main" name="Patient Details" sequence="0" parent="menu_hospital_main" />
+  <menuitem id="menu_appointment_main" name="Appointment Details" sequence="20" parent="menu_hospital_main" />
+  <menuitem id="menu_configuration_main" name="Configuration" sequence="20" parent="menu_hospital_main" />
+  <menuitem id="menu_cancel_appointment" action='action_cancel_appointment_wizard' name="Cancellation" sequence="10" parent="menu_appointment_main" />
+</odoo>
+```
+
+### Security
+
+```py
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+hospital.access_hospital_patient,access_hospital_patient,hospital.model_hospital_patient,base.group_user,1,1,1,1
+hospital.access_hospital_appointment,access_hospital_appointment,hospital.model_hospital_appointment,base.group_user,1,1,1,1
+hospital.access_appointment_pharmacy_lines,access_appointment_pharmacy_lines,hospital.model_appointment_pharmacy_lines,base.group_user,1,1,1,1
+hospital.access_patient_tag,access_patient_tag,hospital.model_patient_tag,base.group_user,1,1,1,1
+hospital.access_cancel_appointment_wizard,access_cancel_appointment_wizard,hospital.model_cancel_appointment_wizard,base.group_user,1,1,1,1
+```
+
+### the model, custom_addons\hospital\wizard\cancel_appointment.py
+
+```py
+from odoo import api, fields, models
+
+
+class CancelAppointmentWizard(models.TransientModel):
+    _name = 'cancel.appointment.wizard'
+    _description = 'Cancel Appointment Wizard'
+
+    appointment_id = fields.Many2one(
+        string='Appointment',
+        comodel_name='hospital.appointment'
+    )
+
+    def action_cancel(self):
+        return
+```
+
+### the view, custom_addons\hospital\wizard\cancel_appointment_wizard.xml
+
+```xml
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <record model="ir.ui.view" id="view_cancel_appointment_form">
+    <field name="name">cancel.appointment.wizard.form</field>
+    <field name="model">cancel.appointment.wizard</field>
+    <field name="arch" type="xml">
+      <form>
+        <group>
+          <group>
+            <field name="appointment_id" />
+          </group>
+          <group></group>
+        </group>
+        <footer>
+          <button string="Cancel Appointment" type="object" class="btn-primary" name="action_cancel" data-hotkey="q" />
+          <button string="Discard" spacial="cancel" class="btn-secondary" data-hotkey="z" />
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_cancel_appointment_wizard" model="ir.actions.act_window">
+    <field name="name">Cancel Appointment</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">cancel.appointment.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="context"></field>
+    <field name="target">new</field>
+  </record>
+
+</odoo>
 ```
