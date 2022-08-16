@@ -1158,7 +1158,7 @@ from . import wizard
   <menuitem id="menu_appointment_main" name="Appointment Details" sequence="20" parent="menu_hospital_main" />
   <menuitem id="menu_configuration_main" name="Configuration" sequence="20" parent="menu_hospital_main" />
   <menuitem id="menu_cancel_appointment" action='action_cancel_appointment_wizard' name="Cancellation" sequence="10" parent="menu_appointment_main" />
-</odoo>
+</odoo> 
 ```
 
 ### Security
