@@ -1226,3 +1226,95 @@ class CancelAppointmentWizard(models.TransientModel):
 
 </odoo>
 ```
+
+## 63. text field
+
+in custom_addons\hospital\wizard\cancel_appointment.py
+
+```py
+    reason = fields.Text(
+        string='Reason',
+    )
+```
+
+in custom_addons\hospital\wizard\cancel_appointment_wizard.xml
+
+```xml
+<group>
+  <field name="appointment_id" />
+  <field name="reason" />
+</group>
+```
+
+## 64. use buttons to get an affect form anther model/ lunch wizard form a button
+
+in custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<!-- button type action -->
+<!-- <button type='action' data-hotkey='n' name="%(action_cancel_appointment_wizard)d" string='Cancel' states='in_consultation,draft' /> -->
+<!-- button type object -->
+<button type='object' data-hotkey='n' name="action_cancel" string='Cancel' states='in_consultation,draft' />
+```
+
+in custom_addons\hospital\models\appointment.py
+
+```py
+# def action_cancel(self):
+#     for rec in self:
+#         rec.state = 'cancel'
+
+def action_cancel(self):
+    action = self.env.ref(
+        'hospital.action_cancel_appointment_wizard').read()[0]
+    return action
+```
+
+## 65+66. load data from xml file
+
+1. create 'data' dir.
+2. create my_model_data.xml/patient_tag_data file
+3. create my.model.csv/patient.tag.csv file
+4. add it to manifest file after security
+
+__notice__: the naming is important, patient_tag.csv causes an error, it can not find the model, while patient.tag.csv not
+
+in custom_addons\hospital\_*manifest*_.py
+
+```py
+'data': [
+    'security/ir.model.access.csv',
+    'data/patient_tag_data.xml',
+    'wizard/cancel_appointment_wizard.xml',
+    'views/menu.xml',
+```
+
+in custom_addons\hospital\data\patient_tag_data.xml
+
+```xml
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+  <record id="patient_tag_vip" model="patient.tag">
+    <field name="name">VIP</field>
+  </record>
+
+  <record id="patient_tag_kid" model="patient.tag">
+    <field name="name">KID</field>
+  </record>
+
+  <record id="patient_tag_kid" model="patient.tag">
+    <field name="name">Master</field>
+    <field name="active" eval="False" />
+  </record>
+
+</odoo>
+```
+
+in custom_addons\hospital\data\patient.tag.csv
+
+```csv
+id,name,active
+patient_tag_ASAP,ASAP,True
+patient_tag_NASAP,NASAP,False
+```
