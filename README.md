@@ -1318,3 +1318,102 @@ id,name,active
 patient_tag_ASAP,ASAP,True
 patient_tag_NASAP,NASAP,False
 ```
+
+## 67. scaffold command
+
+to create odoo model using command line
+
+where u can find the odoo-bin file use this command `python odoo-bin scaffold :my_model :my_path`
+
+`python odoo-bin scaffold om_inheritance C:\Users\bashr\odoo\odoo\custom_addons\`
+
+## 68+69. inheritance, adding field
+
+1. my_inherited_model.py
+2. init file
+3. manifest file
+4. add a field to an inherited view
+
+__my_inherited_model.py__, in custom_addons\om_inheritance\models\sale_order.py:
+
+```py
+from odoo import models, fields, api
+
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    confirmed_user_id = fields.Many2one(
+    string='Confirmed User',
+    comodel_name='res.users',
+    )
+```
+
+__init file__,  custom_addons\om_inheritance\models\_*init*_.py
+
+```py
+from . import sale_order
+```
+
+__manifest file__, custom_addons\om_inheritance\_*manifest*_.py
+
+```py
+# any module necessary for this one to work correctly
+'depends': ['sale'],
+
+# always loaded
+'data': [
+    # 'security/ir.model.access.csv',
+    'views/sale_order_view.xml',
+    'views/templates.xml',
+],
+```
+
+__my_inherited_view__, custom_addons\om_inheritance\views\sale_order_view.xml
+
+```xml
+<odoo>
+  <data>
+
+    <record id="view_order_form_inherit" model="ir.ui.view">
+      <field name="name">sale.order.inherit</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form" />
+      <field name="arch" type="xml">
+
+        <xpath expr="//field[@name='payment_term_id']" position="after">
+
+          <field name="confirmed_user_id" />
+
+        </xpath>
+
+      </field>
+    </record>
+
+
+  </data>
+</odoo>
+```
+
+## 70. inherit a function
+
+1. add inherited function to my_inherited_model.py,
+    * __REMEMBER__ where u place the super will be affected by the execution sequence of python
+
+inherit function __syntax__:
+
+```py
+def action_inherit(self,arg1,arg2):
+  # to_do before the execution of the inherited function
+  super(MyModel,self).action_inherit(arg1,arg2)
+  # to_do after the execution of the inherited function
+  # if u dint place the super line, this function (action_inherit) will get executed not the inherited one!!!!
+```
+
+in custom_addons\om_inheritance\models\sale_order.py
+
+```py
+def action_confirm(self):
+    super(SaleOrder, self).action_confirm()
+    print('Hi, I am working!! ..................')
+    self.confirmed_user_id = self.env.user.id
+```
