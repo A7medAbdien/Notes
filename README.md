@@ -1417,3 +1417,115 @@ def action_confirm(self):
     print('Hi, I am working!! ..................')
     self.confirmed_user_id = self.env.user.id
 ```
+
+## 71. overwrite Create method in patient model
+
+in custom_addons\hospital\models\patient.py
+
+```py
+  @api.model
+  def create(self, vals_list):
+      print("Odoo Metes are the best", vals_list)
+      vals_list['ref'] = 'REFERENCE'
+      return super(HospitalPatient, self).create(vals_list)
+```
+
+## 72. creating a sequence value and use it
+
+1. crete sequence_data.xml in data rep.
+2. add it to manifest file
+3. use sequence value
+
+__sequence_data.xml__, custom_addons\hospital\data\sequence_data.xml
+
+```xml
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+  <record model="ir.sequence" id="seq_hospital_patient">
+    <field name="name">Hospital Patient</field>
+    <field name="code">hospital.patient</field>
+    <field name="prefix">HP</field>
+    <field name="padding">5</field>
+    <field name="company_id" eval="False" />
+  </record>
+
+</odoo>
+```
+
+__manifest file__, custom_addons\hospital\_*manifest*_.py
+
+```py
+'data': [
+    'security/ir.model.access.csv',
+    'data/patient_tag_data.xml',
+    'data/patient.tag.csv',
+    'data/sequence_data.xml',
+```
+
+__Using the sequence, patient.py__, custom_addons\hospital\models\patient.py
+
+```py
+@api.model
+def create(self, vals_list):
+    print("Odoo Metes are the best",
+          self.env['ir.sequence'].next_by_code('pos.order.line'))
+    vals_list['ref'] = self.env['ir.sequence'].next_by_code('hospital.patient')
+    return super(HospitalPatient, self).create(vals_list)
+```
+
+## 73. overwrite Write method/ Edit data of a patient
+
+NOTICE: `vals.get('ref')` to allow entering a value to ref filed. `self.ref==False` the value in the DB is empty, `vals.get('ref')====False` the value of the filed passed to the DB is empty. vals in write method differ form create method, which it contain only the changed fields.
+
+```py
+def write(self, vals):
+    print('write trigger when we edit', vals)
+    if not self.ref and not vals.get('ref'):
+        self.ref = self.env['ir.sequence'].next_by_code(
+            'hospital.patient')
+    return super(HospitalPatient, self).write(vals)
+```
+
+## 74. adding the date_cancel field and overwrite default_get method
+
+custom_addons\hospital\wizard\cancel_appointment.py
+
+```py
+@api.model
+    def default_get(self, fields):
+        res = super(CancelAppointmentWizard, self).default_get(fields)
+        res['date_cancel'] = datetime.date.today()
+        return res
+
+date_cancel = fields.Date(string='Cancellation Date')
+```
+
+custom_addons\hospital\wizard\cancel_appointment_wizard.xml
+
+```xml
+<form>
+  <group>
+    <group>
+      <field name="appointment_id" />
+      <field name="reason" />
+    </group>
+    <group>
+      <field name="date_cancel" />
+    </group>
+  </group>
+```
+
+## 75. name_get method
+
+how the model display its fields in many2one, the changes will done in patient.py and shown in appointment model, the model that uses the patient.py as many2one field
+
+```py
+def name_get(self):
+    # result = []
+    # for record in self:
+    #     name = '[' + record.ref + '] ' + record.name
+    #     result.append((record.id, name))
+    # return result
+    return [(record.id, "[%s] %s" % (record.ref, record.name)) for record in self]
+```
