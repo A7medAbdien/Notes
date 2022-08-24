@@ -1529,3 +1529,73 @@ def name_get(self):
     # return result
     return [(record.id, "[%s] %s" % (record.ref, record.name)) for record in self]
 ```
+
+## 75.1. run odoo from terminal
+
+python_path odoo-bin_path -c odoo.conf_path
+
+`C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin -c C:\Users\bashr\odoo\odoo\odoo.conf`
+
+so what is odoo.conf?
+
+`C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin -h`
+
+will see a list of values you can assign, so what odoo.conf does is assigning those values, but we can do this inline
+we could try
+
+* --addons-path=C:\Users\bashr\odoo\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\custom_addons
+* -r odoo, database user
+* -w odoo, database password
+* --db_host=localhost
+* --db_port=5432
+* -p 8055, UI port
+
+`C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin --addons-path=C:\Users\bashr\odoo\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\custom_addons -r odoo -w odoo --db_host=localhost --db_port=5432 -p 8055`
+
+## 75.2. create odoo.conf from terminal
+
+will add
+
+* --stop-after-init, stop after initialization
+* -s, save
+* -c :configuration_file_path, where it will be saved
+
+`C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin --addons-path=C:\Users\bashr\odoo\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\custom_addons -r odoo -w odoo --db_host=localhost --db_port=5432 -p 8055 --stop-after-init -s -c C:\Users\bashr\odoo\odoo\conf\testconf.conf`
+
+## 75.3. install model from CLI
+
+will add
+
+* -d, database name
+* -i :model_name, install
+
+`C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin -c C:\Users\bashr\odoo\odoo\odoo.conf -d odoo -i crm`
+
+## 75.4. fix Error no 98 Address Already In Use Error
+
+that means that u have a process running on this port:
+
+1. just change port number.
+2. kill the process that running on this port
+
+second solution (only Ubuntu/Linux):
+
+1. `ps aux||grep odoo`
+2. `sudo kill -9 :process_id`
+
+## 75.5. upgrade model from CLI
+
+will add
+
+1. -d :database_name, to access this DB
+2. -u :model_name, to upgrade this model
+
+`C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin -c C:\Users\bashr\odoo\odoo\odoo.conf -d odoo -u hospital`
+
+## 75.6. create database from CLI
+
+will add
+
+1. -d :database_name, to access this DB
+
+`C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin -c C:\Users\bashr\odoo\odoo\odoo.conf -d odoo_test`
