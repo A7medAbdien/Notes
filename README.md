@@ -1599,3 +1599,25 @@ will add
 1. -d :database_name, to access this DB
 
 `C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin -c C:\Users\bashr\odoo\odoo\odoo.conf -d odoo_test`
+
+## WIRED ERROR
+
+for some reason when i tried to run odoo on the default port, 8069, did not work.
+
+shows something like that: web.assets_common.min.js:4451 Uncaught (in promise) Error: QWeb2: Template
+
+changing the port solved the issue, I changed it to 80 instead of 8069.
+
+## 76. Menu And SubMenu Without Specifying Parent & play ground model
+
+1. my_model.py
+2. init file
+3. my_model_view.xml
+4. manifest file
+5. security
+
+we could to add the menu.xml but we added the menuitem in my_model_view.xml,
+
+### menu & submenu
+
+if you did not specify the parent of the menu it will be added to the main, like hospital, sales and CRM
