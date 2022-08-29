@@ -41,3 +41,16 @@ __service product__:
 3. time sheets
 4. expenses
 5. ?account?
+
+## Mon, 29 Aug
+
+1. Odoo slides
+   1. business use case x1
+   2. studio x5
+   3. CRM (without lead)
+2. adjust employee model
+3. why salesperson is shown all users not a sales team members (wishes/NOT DONE)
+
+### salesperson
+
+asked in help form, and tried to work on it. we will need to access the hr.employee from crm.lead, where user_id is the same and display all his child_id
