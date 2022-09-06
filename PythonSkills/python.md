@@ -255,3 +255,9 @@ capitalized_d = {x[0].capitalize() : x[1] for x in d.items()}
 # nested if-statements
 d = [x for x in range(20) if x % 3 == 0 if x % 5 == 0]
 ```
+
+## set
+
+[Set Objects](https://docs.python.org/3/c-api/set.html),
+[Set Structure](https://docs.python.org/3/tutorial/datastructures.html),
+[ALL 👌](https://python-reference.readthedocs.io/en/latest/docs/sets/)
