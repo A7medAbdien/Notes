@@ -7,7 +7,7 @@
 my_string = "Hello!"
 my_float = 7.0
 my_int = 7
-my_array = [1, 2, 3]
+my_list = [1, 2, 3]
 my_dict = {}
 my_set = set()
 my_bytes = bytes(message, 'utf-8')
@@ -72,9 +72,11 @@ shuffle(my_list)
 ```py
 # Arithmetic Operators
 c = a + b
-c = a - by
+c = a - b
 c = a * b
 c = a / b
+c += a #c=c+a
+# c++, no such a thing
 
 # Comparison Operators, all True
 c = 1 == 1
@@ -83,7 +85,7 @@ c = 1 < 2
 c = 1 <= 2
 c = 1 < 2 < 3
 
-# power by
+# power by, Exponentiation
 c = a ** b
 
 # integer division, no float points
@@ -127,9 +129,7 @@ c = Not_member not in My_object
 
 ```
 
-DailyReports
-
-<https://stackoverflow.com/questions/45580350/prints2-12-what-does-this-line-do-in-the-below-program>
+string[::2](https://stackoverflow.com/questions/45580350/prints2-12-what-does-this-line-do-in-the-below-program)
 
 ## Strings
 
@@ -194,7 +194,6 @@ Contents of lists can be easily merged and copied using python’s inbuilt funct
 Array: An array is a vector containing homogeneous elements i.e. belonging to the same data type. Elements are allocated with contiguous memory locations allowing easy modification, that is, addition, deletion, accessing of elements. In Python, we have to use the array module to declare arrays. If the elements of an array belong to different data types, an exception “Incompatible data types” is thrown.
 
 ```py
-
 # creating an array containing same 
 # data type elements 
 import array
