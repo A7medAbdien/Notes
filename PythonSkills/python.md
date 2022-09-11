@@ -23,6 +23,9 @@ del var
 # print representation of a variable
 print(var)
 
+# taking input
+var = input("massage: ")
+
 # assign vales to be nothing, a NoneType
 var=None
 
@@ -33,6 +36,9 @@ a, b = (1, 2)
 ## List
 
 ```py
+# index of an item
+my_list.index("my_item")
+
 # add to list
 my_list.append(1)
 
