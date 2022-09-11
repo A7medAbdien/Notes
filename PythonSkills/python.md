@@ -24,10 +24,16 @@ del var
 print(var)
 
 # taking input
+import sys
 var = input("massage: ")
+var = sys.stdin.readline()
 
 # assign vales to be nothing, a NoneType
 var=None
+
+# generate a random integer
+from random import randint
+value = randint(2, 10)
 
 # assign vales form tuple
 a, b = (1, 2)
