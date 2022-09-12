@@ -1621,3 +1621,21 @@ we could to add the menu.xml but we added the menuitem in my_model_view.xml,
 ### menu & submenu
 
 if you did not specify the parent of the menu it will be added to the main, like hospital, sales and CRM
+
+## 77. difference b/w the action windows types
+
+## 78.self & env
+
+self is a record set, record set is an object we can access its inner values.
+
+self.env['hospital.appointment'].browse(6).patient_id.name
+self.env['hospital.appointment'].browse(6).action_done()
+
+self.env['my.model'].browse(cids/id).patient_id.name
+
+to get the record set of whatever inside
+
+self.env.ref('hospital.patient_tag_vip').name
+self.env.ref('XML ID').name
+
+XML ID, can be found when you open the view metadata from the debugging icon, in the needed view
