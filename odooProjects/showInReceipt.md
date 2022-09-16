@@ -15,7 +15,7 @@ will create a inheritance view
 
 ### Steps
 
-1. `python odoo-bin scaffold showInRecepit C:\Users\bashr\odoo\odoo\custom_addons\`
+1. `python odoo-bin scaffold showInReceipt C:\Users\bashr\odoo\odoo\custom_addons\`
 
 ## 68+69. inheritance, adding field
 
@@ -26,7 +26,7 @@ will add a filed form res.users to sale.order
 3. manifest file
 4. add a field to an inherited view
 
-__my_inherited_model.py__, custom_addons\show_in_recepit\models\product_template.py:
+__my_inherited_model.py__, custom_addons\show_in_receipt\models\product_template.py:
 
 ```py
 from odoo import models, fields, api
@@ -40,13 +40,13 @@ class ProductTemplate(models.Model):
     )
 ```
 
-__init file__,  custom_addons\show_in_recepit\models\__init__.py
+__init file__,  custom_addons\show_in_receipt\models\__init__.py
 
 ```py
 from . import product_template
 ```
 
-__manifest file__, custom_addons\show_in_recepit\_*manifest*_.py
+__manifest file__, custom_addons\show_in_receipt\_*manifest*_.py
 
 ```py
     # any module necessary for this one to work correctly
@@ -59,7 +59,7 @@ __manifest file__, custom_addons\show_in_recepit\_*manifest*_.py
         'views/product_template_view.xml',
 ```
 
-__my_inherited_view__, custom_addons\show_in_recepit\views\product_template_view.xml
+__my_inherited_view__, custom_addons\show_in_receipt\views\product_template_view.xml
 
 ```xml
 <odoo>
