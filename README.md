@@ -1377,6 +1377,7 @@ __my_inherited_view__, custom_addons\om_inheritance\views\sale_order_view.xml
     <record id="view_order_form_inherit" model="ir.ui.view">
       <field name="name">sale.order.inherit</field>
       <field name="model">sale.order</field>
+      <!-- get ref from External ID of the view you wanna add to it  -->
       <field name="inherit_id" ref="sale.view_order_form" />
       <field name="arch" type="xml">
 
