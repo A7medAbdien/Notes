@@ -1643,7 +1643,19 @@ XML ID, can be found when you open the view metadata from the debugging icon, in
 
 ## 78. active_id
 
-### add ing the appointment sequence
+Adding the appointment sequence:
+
+1. appointment.py, adding field
+2. appointment view, show it in the view
+3. sequence_data.xml, adding the sequence
+4. appointment.py, edit the create method
+
+Using the active_id:
+
+1. from view
+2. form model
+
+### adding the appointment sequence
 
 1. appointment.py, adding field, custom_addons\hospital\models\appointment.py
 
@@ -1719,4 +1731,44 @@ edit the cancel_appointment.py wizard, custom_addons\hospital\wizard\cancel_appo
         print(".................context", self.env.context)
         res['appointment_id'] = self.env.context.get('active_id')
         return res
+```
+
+## 79. hide field based on context
+
+Note that we need two separate view files to apply this, ex:
+
+1. appointment_view.xml and cancel_appointment_view.xml
+2. female_patient_view.xml and patient_view.xml
+
+steps:
+
+1. add a marker to the context attribute to the record you wanna hide
+2. add invisible attribute and get the value of that marker
+
+__Case 1:__ appointment_view.xml and cancel_appointment_view.xml
+
+adding the marker, custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<button type='action' data-hotkey='n' name="%(action_cancel_appointment_wizard)d" string='Cancel' states='in_consultation,draft' context="{'hide_appointment': 1}" />
+```
+
+invisible attribute, custom_addons\hospital\wizard\cancel_appointment_wizard.xml
+
+```xml
+<field name="appointment_id" invisible="context.get('hide_appointment')" />
+```
+
+__Case 2:__ female_patient_view.xml and patient_view.xml, hide gender
+
+adding the marker, custom_addons\hospital\views\female_patient_view.xml
+
+```xml
+<field name="context">{"default_gender":"female","default_age":20,"hide_gender":1}</field>
+```
+
+invisible attribute, custom_addons\hospital\views\patient_view.xml
+
+```xml
+<field name="gender" invisible="context.get('hide_gender')" />
 ```
