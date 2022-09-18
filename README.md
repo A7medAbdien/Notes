@@ -1743,7 +1743,7 @@ Note that we need two separate view files to apply this, ex:
 steps:
 
 1. add a marker to the context attribute to the record you wanna hide
-2. add invisible attribute and get the value of that marker
+2. add invisible attribute and get the value of that marker, __in form view__
 
 __Case 1:__ appointment_view.xml and cancel_appointment_view.xml
 
@@ -1771,4 +1771,21 @@ invisible attribute, custom_addons\hospital\views\patient_view.xml
 
 ```xml
 <field name="gender" invisible="context.get('hide_gender')" />
+```
+
+## rising a validation error
+
+_ is for translation purpose
+
+```py
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
+
+# ...some code here
+
+def action_cancel(self):
+    if self.appointment_id.booking_date == fields.Date.today():
+        raise ValidationError(
+            _("Sorry, cancellation is not allowed on the same day of booking !"))
+    return
 ```
