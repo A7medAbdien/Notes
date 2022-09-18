@@ -1698,7 +1698,16 @@ XML ID, can be found when you open the view metadata from the debugging icon, in
         return super(HospitalAppointment, self).create(vals_list)
     ```
 
-### using active_id, which will display the rec_name of the model
+### adding active_id to view using button type action
+
+custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<!-- button type action -->
+<button type='action' data-hotkey='n' name="%(action_cancel_appointment_wizard)d" string='Cancel' states='in_consultation,draft' context="{'default_appointment_id':active_id}" />
+```
+
+### adding active_id to python file, which will display the rec_name of the model
 
 edit the cancel_appointment.py wizard, custom_addons\hospital\wizard\cancel_appointment.py
 
