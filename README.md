@@ -1773,7 +1773,7 @@ invisible attribute, custom_addons\hospital\views\patient_view.xml
 <field name="gender" invisible="context.get('hide_gender')" />
 ```
 
-## rising a validation error
+## 80. rising a validation error
 
 _ is for translation purpose
 
