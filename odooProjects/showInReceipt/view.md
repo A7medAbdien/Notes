@@ -1,19 +1,8 @@
-# Odoo-showInReceipt
+# showInReceipt view
 
-Control the appearance in POS (Point of sale) receipt
+will create an inherited view
 
-5:50am
-
-## theory
-
-1. we need to understand the product model, cuz it is the place where will show this feature
-2. how the values appear in the receipt
-
-## view
-
-will create a inheritance view
-
-### Steps
+## Steps
 
 1. `python odoo-bin scaffold showInReceipt C:\Users\bashr\odoo\odoo\custom_addons\`
 
@@ -40,13 +29,13 @@ class ProductTemplate(models.Model):
     )
 ```
 
-__init file__,  custom_addons\show_in_receipt\models\__init__.py
+__init file__,  custom_addons\show_in_receipt\models\\_\_init__.py
 
 ```py
 from . import product_template
 ```
 
-__manifest file__, custom_addons\show_in_receipt\_*manifest*_.py
+__manifest file__, custom_addons\show_in_receipt\\_\_manifest__.py
 
 ```py
     # any module necessary for this one to work correctly
