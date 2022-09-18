@@ -13,4 +13,4 @@ need to understand:
 
 1. add boolean field (Done)
 2. pass this value to the xml receipt
-3. add if condition to the xml receipt
+3. add if condition to the xml receipt (QWeb)

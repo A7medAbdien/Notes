@@ -1470,7 +1470,7 @@ __Using the sequence, patient.py__, custom_addons\hospital\models\patient.py
 @api.model
 def create(self, vals_list):
     print("Odoo Metes are the best",
-          self.env['ir.sequence'].next_by_code('pos.order.line'))
+          self.env['ir.sequence'].next_by_code('hospital.patient'))
     vals_list['ref'] = self.env['ir.sequence'].next_by_code('hospital.patient')
     return super(HospitalPatient, self).create(vals_list)
 ```
@@ -1640,3 +1640,74 @@ self.env.ref('hospital.patient_tag_vip').name
 self.env.ref('XML ID').name
 
 XML ID, can be found when you open the view metadata from the debugging icon, in the needed view
+
+## 78. active_id
+
+### add ing the appointment sequence
+
+1. appointment.py, adding field, custom_addons\hospital\models\appointment.py
+
+    Note that we will commit the rec_name, since we wanna display the name field when we uses the active_id
+
+    ```py
+    # _rec_name = 'ref'
+
+    name = fields.Char(
+        string='name',
+        readonly=True
+    )
+    ```
+
+2. appointment view, custom_addons\hospital\views\appointment_view.xml
+
+    ```xml
+    </header>
+        <sheet>
+          <div class="oe_title">
+            <h1>
+              <field name="name" />
+            </h1>
+          </div>
+          <div>
+            <h3>
+              <field name='priority' widget='priority' />
+            </h3>
+    ```
+
+3. sequence_data.xml, custom_addons\hospital\data\sequence_data.xml
+
+    ```xml
+    <record model="ir.sequence" id="seq_hospital_appointment">
+      <field name="name">Hospital Appointment</field>
+      <field name="code">hospital.appointment</field>
+      <field name="prefix">OP</field>
+      <field name="padding">5</field>
+      <field name="company_id" eval="False" />
+    </record>
+    ```
+
+4. appointment.py, edit the create method, custom_addons\hospital\models\appointment.py
+
+    ```py
+    @api.model
+    def create(self, vals_list):
+        print("Odoo Metes are the best",
+              self.env['ir.sequence'].next_by_code('hospital.appointment'))
+        vals_list['name'] = self.env['ir.sequence'].next_by_code(
+            'hospital.appointment')
+        return super(HospitalAppointment, self).create(vals_list)
+    ```
+
+### using active_id, which will display the rec_name of the model
+
+edit the cancel_appointment.py wizard, custom_addons\hospital\wizard\cancel_appointment.py
+
+```py
+@api.model
+    def default_get(self, fields):
+        res = super(CancelAppointmentWizard, self).default_get(fields)
+        res['date_cancel'] = datetime.date.today()
+        print(".................context", self.env.context)
+        res['appointment_id'] = self.env.context.get('active_id')
+        return res
+```
