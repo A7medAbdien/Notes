@@ -1789,3 +1789,21 @@ def action_cancel(self):
             _("Sorry, cancellation is not allowed on the same day of booking !"))
     return
 ```
+
+## 81. Apply domain field, can be done in xml or python
+
+in custom_addons\hospital\wizard\cancel_appointment_wizard.xml
+
+```xml
+<field name="appointment_id" invisible="context.get('hide_appointment')" domain="[('state', '=', 'draft')]" />
+```
+
+in custom_addons\hospital\wizard\cancel_appointment.py
+
+```py
+appointment_id = fields.Many2one(
+    string='Appointment',
+    comodel_name='hospital.appointment',
+    domain=[('state', '=', 'draft'), ('priority', 'in', ('0', '1', False))]
+)
+```
