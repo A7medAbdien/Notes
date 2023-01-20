@@ -152,16 +152,19 @@ Too see the changes:
 
 __NOTE:__ to get an existing action go for it works and from the debugging icon, edit action
 
-__Important:__ must create any menuitem that uses an action, after their action. So we the `Patients` menuitem will be moved to `patient.xml`, because the execution start in manifest in the data object executing them one by one, so when it executes the `menu.xml` will find a menuitem that has an action that still didn't created, causing an error.
+__Important:__ must create any menuitem that uses an action, after their action. So the `Patients` menuitem will be moved to `patient.xml`, because the execution start in manifest in the data object, executing them one by one, so when it executes the `menu.xml` will find a menuitem that has an action that still didn't created, causing an error.
 
 ### 7. security rights
 
+1. search in the logs for the access rules
 in custom_addons\hospital\security\ir.model.access.csv
 
 ```csv
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 hospital.access_hospital_patient,access_hospital_patient,hospital.model_hospital_patient,base.group_user,1,1,1,1
 ```
+
+add access path to the manifest file
 
 ### 8. set menu icon
 
@@ -251,7 +254,7 @@ __NOTES__:
 * in filter_domain to have more than oen or condition,'|', add another '|' and add the condition
   * filter_domain="['|','|',('name', 'ilike', self),('anotherValue', 'ilike', self),('ref', 'ilike', self)]"
 
-### 12. add filter and search view
+### 12. add filter TO search view
 
 __NOTES__:
 
