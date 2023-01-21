@@ -316,7 +316,7 @@ in search record
 <filter string="Archive" name="filter_archive" domain="[('active','=',False)]" />
 ```
 
-## 14. Apply domain for a menu
+## 14. Apply domain for a menu/view
 
 1. model will be from patient.hospital
 2. view:
@@ -388,9 +388,10 @@ in view, custom_addons\hospital\views\patient_view.xml
     _description = "Hospital Patient"
    ```
 
-3. in custom_addons\hospital\views\patient_view.xml
+3. in custom_addons\hospital\views\patient_view.xml in form view under the sheet tag
 
   ```xml
+  </sheet>
   <div class="oe_chatter">
     <field name="message_follower_ids" widget="mail_followers" />
     <field name="activity_ids" widget="mail_activity" />
@@ -413,11 +414,11 @@ name = fields.Char(string="Name", tracking=True)
 
 ## 19. Add searchpanel
 
-in search tag in patient_view.xml
+in search tag in patient_view.xml in search view
 
 ```xml
 <searchpanel>
-  <field name="gender" enable_conter="1" />
+  <field name="gender" icon="fa-user" enable_conter="1" />
 </searchpanel>
 ```
 
@@ -547,7 +548,7 @@ in search tag in patient_view.xml
     }
    ```
 
-5. edit the security access
+5. add it to the security access
 
    ```py
     id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
@@ -557,7 +558,7 @@ in search tag in patient_view.xml
 
 ## 21+22. add date and datetime with default value
 
-__carful:__ Date and Datetime not date and datetime
+__carful:__ Date and Datetime not date and datetime, Case sensitive
 
 in custom_addons\hospital\models\appointment.py
 
