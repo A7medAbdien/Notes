@@ -457,7 +457,9 @@ in search tag in patient_view.xml in search view
         <field name="name">hospital appointment</field>
         <field name="model">hospital.appointment</field>
         <field name="arch" type="xml">
-          <tree></tree>
+          <tree>
+            <field name="patient_id" />
+          </tree>
         </field>
       </record>
 
@@ -500,7 +502,7 @@ in search tag in patient_view.xml in search view
         </field>
       </record>
 
-      <menuitem id="menu_appointment_details" name="Appointments" action="action_hospital_appointment" parent="menu_patient_main" />
+      <menuitem id="menu_appointment_details" name="Appointments" action="action_hospital_appointment" parent="menu_hospital_main" />
     </odoo>
     ```
 
@@ -572,6 +574,7 @@ booking_date = fields.Date(
 in custom_addons\hospital\views\appointment_view.xml under the patient_id
 
 ```xml
+<!-- form view -->
 <field name="appointment_time" />
 <field name="booking_date" />
 ```
@@ -586,7 +589,14 @@ gender = fields.Selection(related="patient_id.gender", readonly=True)
 
 __notice:__ readonly if False will allow to make change to the value and it is by default True in the related field
 
-## 24. Add Computed Field
+in custom_addons\hospital\views\appointment_view.xml under the patient_id
+
+```xml
+<!-- form view -->
+<field name="gender" />
+```
+
+## 24. Add Computed Field, age
 
 1. edit the age field
 2. add date of birth field(dob)
@@ -611,9 +621,15 @@ age = fields.Integer(string="Age", tracking=True, compute='_compute_age')
                 rec.age = 1
 ```
 
+__notice:__ we can store the age by adding the store attribute like the commented one. we can not track a field that is not stored in the database
+
 ### in custom_addons\hospital\views\patient_view.xml
 
 ```xml
+<!-- form view -->
+<field name="dob"/>
+
+<!-- search view -->
 <!-- <separator /> -->
 <!-- <filter string="Kids" name="filter_kids" domain="[('age','&lt;=','5')]" /> -->
 ```
@@ -624,31 +640,129 @@ age = fields.Integer(string="Age", tracking=True, compute='_compute_age')
 2. create the onchange function, in model file
 3. add it in view
 
-## 26. _rec_name
+in custom_addons\hospital\models\patient.py
+
+```py
+    ref = fields.Char(string="Reference")
+
+    @api.onchange('patient_id')
+    def onchange_patient_id(self):
+        self.ref = self.patient_id.ref
+```
+
+in custom_addons\hospital\views\patient_view.xml
+
+```xml
+<field name="ref"/>
+```
+
+## 26. _rec_name, for appointment
 
 1. it is what we see in the navigation bar!!
 2. what will be seen if we used this value in many2one field
 
+by default it is `_rec_name = 'name'`
+
+in custom_addons\hospital\models\appointment.py
+```py
+    _rec_name = "ref"
+```
+
+in custom_addons\hospital\models\patient.py
+
+```py
+    appointment_id = fields.Many2one('hospital.appointmentg', 'Appointment', tracking=True)
+```
+
+in custom_addons\hospital\views\patient_view.xml
+
+```xml
+<field name="appointment_id"/>
+```
+
 ## 27. notebook
 
-under the sheet tag add `<notebook><page><group><field>`
+at the end of the sheet tag add `<notebook><page><group><field/>`
 
-## 28. HTML field
+in custom_addons\hospital\views\appointment_view.xml
+
+```xml
+  <!-- notebook -->
+  <notebook>
+      <page string="Prescription" name="prescription">
+          <group>
+              <field name="booking_date"/>
+          </group>
+      </page>
+      <page string="Pharmacy" name="pharmacy">
+      </page>
+  </notebook>
+</sheet>
+```
+
+__notice__: the name attribute is important because we will need it when we do an inhabitance
+
+## 28. HTML field, prescription field
 
 1. add it in the model
 2. add it in the view
 3. add placeholder attribute
 
+in custom_addons\hospital\models\appointment.py
+
+```py
+    prescription = fields.Html(string="Prescription")
+```
+
+in custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<field name="prescription" placeholder="Enter your prescription"/>
+```
+
 ## 29. Remove Create, Edit, Delete and Duplicate Options From Views
 
 in from or tree tag add `crete='0'`
 
-this what i needed after editing the access rights of the employee to deny him from creating a quotation
+**example**:
 
-## 30. Priority Widget
+```xml
+<form
+        create="0" 
+        edit="0"
+        delete="0"
+        copy="0"
+>
+```
+
+__MyExperience__: this what i needed after editing the access rights of the employee to deny him from creating a quotation
+
+## 30. Starts Priority Widget
 
 1. add new selection field in model
-2. add it to the view
+2. add it at the beginning of form view sheet
+
+in custom_addons\hospital\models\appointment.py
+
+```py
+    priority = fields.Selection([
+        ('0', 'Normal'),
+        ('1', 'Low'),
+        ('2', 'High'),
+        ('3', 'Very High')
+    ], string='Priority')
+```
+in custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<sheet>
+    <!--starts priority widget-->
+    <div class="oe_title">
+        <h1>
+            <field name="priority" widget="priority" calss="mr-3"/>
+        </h1>
+    </div>
+```
 
 ## 31. Status bar
 
