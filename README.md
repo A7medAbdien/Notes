@@ -603,7 +603,7 @@ in custom_addons\hospital\views\appointment_view.xml under the patient_id
 3. crete the compute function
 4. comment the age filter, because the computed field does not store in the DB
 
-### in custom_addons\hospital\models\patient.py
+in custom_addons\hospital\models\patient.py
 
 ```py
 dob = fields.Date(string="Date of Birth")
@@ -623,7 +623,7 @@ age = fields.Integer(string="Age", tracking=True, compute='_compute_age')
 
 __notice:__ we can store the age by adding the store attribute like the commented one. we can not track a field that is not stored in the database
 
-### in custom_addons\hospital\views\patient_view.xml
+in custom_addons\hospital\views\patient_view.xml
 
 ```xml
 <!-- form view -->
@@ -769,6 +769,33 @@ in custom_addons\hospital\views\appointment_view.xml
 1. add new selection field in model
 2. add it to the view
 
+in custom_addons\hospital\models\appointment.py
+
+```py
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('in_consultation', 'In Consultation'),
+        ('done', 'Done'),
+        ('cancel', 'Cancel')
+    ], string='Status')
+```
+
+in custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<form>
+    <!--status bar-->
+    <header>
+        <field name="state"
+                widget="statusbar"
+                nolabel="1"
+                options="{'clickable':'1}"
+                statusbar_visable="draft,in_consultation,done"
+        />
+    </header>
+    <sheet>
+```
+
 ## 32+33+34. two types of buttons & confirmation massage & help massage
 
 1. action: to do a window action
@@ -789,6 +816,20 @@ def action_test(self):
 ```
 
 ## 35. add else in the computed fields
+
+in custom_addons\hospital\models\patient.py
+
+```py
+    @api.depends('dob')
+    def _compute_age(self):
+        print("self................", self)
+        for rec in self:
+            today = datetime.date.today()
+            if rec.dob:
+                rec.age = today.year - rec.dob.year
+            else:
+                rec.age = 1
+```
 
 ## 36. rainbow effect
 
