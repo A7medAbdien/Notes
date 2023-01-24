@@ -656,6 +656,10 @@ in custom_addons\hospital\views\patient_view.xml
 <field name="ref"/>
 ```
 
+---
+
+From NOW on KEEP appointment_view.xml and appointment.py opens
+
 ## 26. _rec_name, for appointment
 
 1. it is what we see in the navigation bar!!
@@ -873,7 +877,7 @@ in the tree view custom_addons\hospital\views\appointment_view.xml
 
 ## 40. Optional Field Visibility In List View
 
-1. in tree view fields
+1. in tree view custom_addons\hospital\views\appointment_view.xml
 
    ```xml
    <field name="appointment_time" optional="show" />
@@ -886,13 +890,38 @@ the one with user open the chat, the other not
 1. create field based on users of odoo domain
 2. add it to the view with `widget='many2one_avatar_user'`
 
+in custom_addons\hospital\models\appointment.py
+
+```py
+    doctor_id = fields.Many2one('res.users', string='Doctor')
+```
+
+in custom_addons\hospital\views\appointment_view.xml
+
+```xml
+<!-- in tree view -->
+<!-- will just show the avatar no chat -->
+<field name="doctor_id" widget="many2one_avatar"/>
+<!-- will just show the avatar and chat when you click -->
+<field name="doctor_id" widget="many2one_avatar_user"/>
+
+<!-- in form view -->
+<field name="doctor_id" widget="many2one_avatar"/>
+```
+
 ## 42+43. make field 'collaborative':true && 'resizable': true
+
+collaborative: more than one can write to the field at the same time
+resizable: can change the size of the field
 
 in html field in the appointment model, add `options="{'collaborative': true, 'resizable': true}"`
 
 ## 44. Default Focus
 
 select the field that you want to be focused when the user start edit the record and add `default_focus='1'`, underscore
+
+in custom_addons\hospital\views\appointment_view.xml
+
 
 ```xml
 <field name="booking_date" default_focus="1" />
@@ -902,13 +931,16 @@ select the field that you want to be focused when the user start edit the record
 
 in tree field add `sample='1'`
 
+in custom_addons\hospital\views\appointment_view.xml
+
 ```xml
 <tree decoration-success="state =='done'" decoration-info="state =='draft'" decoration-danger="state=='in_consultation'" sample='1'>
 ```
 
----
 
 ## 46. enable editing form tree view
+
+after selecting the record in the tree view we can edit it
 
 add to the tree view `multi_edit='1'`
 
@@ -924,13 +956,46 @@ add to the tree view `multi_edit='1'`
 2. create their object actions/methods
 3. set their states attribute, when they will be shown
 
+```xml
+<!-- form view -->
+<header>
+    <button name="action_in_consultation" string="In Consultation" type="object" states="draft" class="oe_highlight"/>
+    <button name="action_done" string="Done" type="object" states="in_consultation" class="oe_highlight"/>
+    <button name="action_cancel" string="Cancel" type="object" states="draft,in_consultation" />
+    <button name="action_draft" string="Draft" type="object" states="cancel" class="oe_highlight"/>
+```
+
+```py
+    def action_draft(self):
+        for rec in self:
+            rec.state = 'draft'
+
+    def action_in_consultation(self):
+        for rec in self:
+            rec.state = 'in_consultation'
+
+    def action_done(self):
+        for rec in self:
+            rec.state = 'done'
+
+    def action_cancel(self):
+        for rec in self:
+            rec.state = 'cancel'
+```
+
 ## 48. add hot keys for buttons
 
-add `data-hotkey='z'`, any letter available
+add `data-hotkey='i'`, any letter available
 
-## 49. add One2Many field
+```xml
+<button name="action_in_consultation" string="In Consultation" type="object" states="draft" class="oe_highlight" data-hotkey='i'/>
+```
 
-One2many in One from many
+## 49. add One2Many field, Pharmacy field
+
+One2many results in many records connected to one record, like a bag containing many items
+
+Many2one results in one record selected form many record, like an item form a bag
 
 One2many in appointment from pharmacy
 
@@ -938,12 +1003,13 @@ One -> appointment
 
 Many -> Pharmacy
 
-0. create the model, we want its many
-1. in pharmacy, add a Many2one field with the appointment
-2. in appointment, add One2many field and pass field from step 1
-3. add the pharmacy One2many field to the view
+1. create the model, we want its many
+2. in pharmacy, add a Many2one field with the appointment
+3. in appointment, add One2many field and pass field from step 1
+4. add the pharmacy One2many field to the view
 4. create the tree and form view from one2 many field
-5. in this case the product model have been used so we need to add it to the depends in the manifest file
+6. in this case the product model have been used so we need to add it to the depends in the manifest file
+7. add security access
 
 ### pharmacy model at the end of custom_addons\hospital\models\appointment.py
 
@@ -969,9 +1035,7 @@ pharmacy_lines_id = fields.One2many('appointment.pharmacy.lines', 'appointment_i
 
 ```xml
 <notebook>
-  <page string="Prescription">
-    <field name='prescription' placeholder='Enter prescription' options="{'collaborative': true, 'resizable': true}" />
-  </page>
+  <!-- Prescription page -->
   <page string='Pharmacy'>
     <field name="pharmacy_lines_id">
       <tree editable='bottom'>
@@ -997,38 +1061,56 @@ pharmacy_lines_id = fields.One2many('appointment.pharmacy.lines', 'appointment_i
 'depends': ['mail', 'product'],
 ```
 
----
+### security access
 
-## 50. editable attribute in the tree tag
+```csv
+om_hospital_g.access_appointmentg_pharmacy_lines,access_appointmentg_pharmacy_lines,om_hospital_g.model_appointmentg_pharmacy_lines,base.group_user,1,1,1,1
+```
 
-1. without the editable, when adding a new line will show a pop up of the form
-2. top, will fill the data at the top of the list/tree
-3. bottom, will fill the data at the bottom of the list/tree
 
-## 51. colum inviable based on value in the model, all xml
-
-1. add boolean field
-2. add attrs attribute to the field will be hidden
-3. add the condition of hide
+## 50. editable attribute in the tree tag in the pharmacy filed
 
 ```xml
-</page>
   <page string='Pharmacy'>
     <field name="pharmacy_lines_id">
       <tree editable='bottom'>
-        <field name="product_id" />
-        <field name="price_unit" attrs="{ 'column_invisible':[('parent.hide_sales_price','=',True)] }" />
-        <field name="qty" />
+```
+
+1. `bottom`, will fill the data at the bottom of the list/tree
+2. `top`, will fill the data at the top of the list/tree
+3. without the editable, when adding a new line will show a pop up of the form
+
+## 51. colum inviable based on value in the model
+
+1. add boolean field
+2. add `attrs` attribute to the field will be hidden, `parent` means the appointment model
+3. add the condition of hide
+
+in appointment model
+
+```py
+hide_sales_price = fields.Boolean(string='Hide Sales Price')
+```
+
+```xml
+<page string='Pharmacy'>
+  <field name="pharmacy_lines_id">
+      <tree editable='bottom'>
+          <field name="product_id"/>
+          <field name="price_unit"
+                  attrs="{ 'column_invisible':[('parent.hide_sales_price','=',True)] }"/>
+          <field name="qty"/>
       </tree>
       <form>
-        <group>
-          <field name="product_id" />
-          <field name="price_unit" attrs="{ 'column_invisible':[('parent.hide_sales_price','=',True)] }" />
-          <field name="qty" />
-        </group>
+          <group>
+              <field name="product_id"/>
+              <field name="price_unit"
+                      attrs="{ 'column_invisible':[('parent.hide_sales_price','=',True)] }"/>
+              <field name="qty"/>
+          </group>
       </form>
-    </field>
-  </page>
+  </field>
+</page>
 ```
 
 ## 52. show only in the developer mode
