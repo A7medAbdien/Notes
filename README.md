@@ -1093,6 +1093,12 @@ hide_sales_price = fields.Boolean(string='Hide Sales Price')
 ```
 
 ```xml
+<!-- First group -->
+  <field name="hide_sales_price" groups="base.group_no_one"/>
+```
+
+```xml
+<!-- Pharmacy page -->
 <page string='Pharmacy'>
   <field name="pharmacy_lines_id">
       <tree editable='bottom'>
@@ -1117,6 +1123,14 @@ hide_sales_price = fields.Boolean(string='Hide Sales Price')
 
 add `groups="base.group_no_one"` to the field u wanna hide
 
+```xml 
+  <field name="hide_sales_price" groups="base.group_no_one"/>
+```
+
+---
+
+Back to the patient model
+
 ## 53. image field
 
 in custom_addons\hospital\models\patient.py
@@ -1125,7 +1139,7 @@ in custom_addons\hospital\models\patient.py
 image = fields.Image(string='Image')
 ```
 
-in custom_addons\hospital\views\patient_view.xml
+in custom_addons\hospital\views\patient_view.xml in Form view
 
 ```xml
 <sheet>
@@ -1137,6 +1151,8 @@ in custom_addons\hospital\views\patient_view.xml
       <field name="age" />
     </group>
 ```
+---
+patient_tag
 
 ## 54. create tags model and use boolean_toggle widget
 
@@ -1271,11 +1287,11 @@ color2 = fields.Char(
 )
 ```
 
-in custom_addons\hospital\views\patient_tag_view.xml
+in custom_addons\hospital\views\patient_tag_view.xml in form view
 
 ```xml
-<field name="color" widget="color" />
-<field name="color2" widget="color_picker" groups="base.group_no_one" />
+<field name="color"  widget="color_picker" groups="base.group_no_one"/>
+<field name="color2"  widget="color"/>
 ```
 
 in custom_addons\hospital\models\patient.py
@@ -1292,6 +1308,12 @@ in tree and form view custom_addons\hospital\views\patient_view.xml
 ```xml
 <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" />
 ```
+
+**Notice**: `options="{'color_field': 'color'}"` allows you to see the color of the tag. And sadly, if you tried color2 will not work!!
+
+---
+
+appointment
 
 ## 59. add activity view to the appointment
 
@@ -1320,28 +1342,19 @@ in tree and form view custom_addons\hospital\views\patient_view.xml
 ```
 
 ```xml
-<record id="action_hospital_appointment" model="ir.actions.act_window">
-    <field name="name">Appointments</field>
-    <field name="type">ir.actions.act_window</field>
-    <field name="res_model">hospital.appointment</field>
+<!-- action -->
     <field name="view_mode">tree,form,activity</field>
-    <field name="context">{}</field>
-    <field name="help" type='html'>
-      <p class='o_view_nocontent_smiling_face'>
-            Create your first appointment!
-      </p>
-    </field>
-</record>
 ```
 
 ## 60. enable the html code
 
-suppose passing `codeview':true` in options attribute will make it work but for me it did not work
+add `codeview':true` at the beginning of the `options` attribute, because when I add it at the end, it work but for me
 
 in prescription field in custom_addons\hospital\views\appointment_view.xml
 
 ```xml
-<field name='prescription' placeholder='Enter prescription' options="{'collaborative': true, 'resizable': true,'codeview':true}" />
+<field name="prescription" placeholder="Enter your prescription"
+      options="{'codeview': true, 'collaborative': true, 'resizable': true}"/>
 ```
 
 ## 61+62. transient model
@@ -1376,6 +1389,8 @@ from . import wizard
 ```
 
 ### manifest file, they loaded by their order
+
+wizards added before the views and after security
 
 ```py
 'data': [
