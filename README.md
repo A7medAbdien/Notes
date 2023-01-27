@@ -1357,7 +1357,10 @@ in prescription field in custom_addons\hospital\views\appointment_view.xml
       options="{'codeview': true, 'collaborative': true, 'resizable': true}"/>
 ```
 
-## 61+62. transient model
+---
+cancel_appointment files
+
+## 61+62. adding Wizard, transient model
 
 * for temporarily data usage
 
@@ -1405,6 +1408,8 @@ wizards added before the views and after security
 ```
 
 ### menu.py, custom_addons\hospital\views\menu.xml
+
+we will add two items
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -1465,7 +1470,7 @@ class CancelAppointmentWizard(models.TransientModel):
         </group>
         <footer>
           <button string="Cancel Appointment" type="object" class="btn-primary" name="action_cancel" data-hotkey="q" />
-          <button string="Discard" spacial="cancel" class="btn-secondary" data-hotkey="z" />
+          <button string="Discard" special="cancel" class="btn-secondary" data-hotkey="z" />
         </footer>
       </form>
     </field>
@@ -1483,7 +1488,7 @@ class CancelAppointmentWizard(models.TransientModel):
 </odoo>
 ```
 
-## 63. text field
+## 63. text field, reason field
 
 in custom_addons\hospital\wizard\cancel_appointment.py
 
@@ -1502,7 +1507,7 @@ in custom_addons\hospital\wizard\cancel_appointment_wizard.xml
 </group>
 ```
 
-## 64. use buttons to get an affect form anther model/ lunch wizard form a button
+## 64. use buttons to get an affect form another model/ lunch wizard form a button
 
 in custom_addons\hospital\views\appointment_view.xml
 
@@ -1529,7 +1534,7 @@ def action_cancel(self):
 ## 65+66. load data from xml file
 
 1. create 'data' dir.
-2. create my_model_data.xml/patient_tag_data file
+2. create my_model_data.xml/patient_tag_data.xml file
 3. create my.model.csv/patient.tag.csv file
 4. add it to manifest file after security
 
@@ -1541,6 +1546,7 @@ in custom_addons\hospital\_*manifest*_.py
 'data': [
     'security/ir.model.access.csv',
     'data/patient_tag_data.xml',
+    'data/patient.tag.csv',
     'wizard/cancel_appointment_wizard.xml',
     'views/menu.xml',
 ```
@@ -1585,10 +1591,13 @@ where u can find the odoo-bin file use this command `python odoo-bin scaffold :m
 
 ## 68+69. inheritance, adding field
 
-1. my_inherited_model.py
+1. crate the model, my_inherited_model.py
 2. init file
 3. manifest file
-4. add a field to an inherited view
+4. add a field to an inherited view, this is the tricky part: since we will need to connect our field with an existing on on the desired view.
+   1. if we was able to find the field in the view, our new field  will be added successfully
+   2. if not, we will have to look at the inherited views, and based on your luck and experience, u guess which one that might have this field :sweat_smile: 
+5. download the model from the app store
 
 __my_inherited_model.py__, in custom_addons\om_inheritance\models\sale_order.py:
 
