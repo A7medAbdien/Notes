@@ -4,6 +4,7 @@ The videos:
 
 1. [installation](https://youtu.be/eD12tbz6BC4)
 2. [setup the environment](https://youtu.be/LS8tdWoiOQQ)
+3. [set the environment for VSCode](https://www.youtube.com/watch?v=OzeINH1IwVk)
 
 * could to try [it](https://youtu.be/XBR_hcwY0HE)
 
@@ -1660,19 +1661,19 @@ __my_inherited_view__, custom_addons\om_inheritance\views\sale_order_view.xml
 </odoo>
 ```
 
-## 70. inherit a function
+## 70. inherit a method
 
-1. add inherited function to my_inherited_model.py,
+1. add inherited method to my_inherited_model.py,
     * __REMEMBER__ where u place the super will be affected by the execution sequence of python
 
-inherit function __syntax__:
+inherit method __syntax__:
 
 ```py
 def action_inherit(self,arg1,arg2):
-  # to_do before the execution of the inherited function
+  # to_do before the execution of the inherited method
   super(MyModel,self).action_inherit(arg1,arg2)
-  # to_do after the execution of the inherited function
-  # if u dint place the super line, this function (action_inherit) will get executed not the inherited one!!!!
+  # to_do after the execution of the inherited method
+  # if u dint place the super line, this method (action_inherit) will get executed not the inherited one!!!!
 ```
 
 in custom_addons\om_inheritance\models\sale_order.py
@@ -1683,6 +1684,13 @@ def action_confirm(self):
     print('Hi, I am working!! ..................')
     self.confirmed_user_id = self.env.user.id
 ```
+
+---
+## Override Methods:
+
+1. create, 71+72
+2. write, 73
+3. default_get, 74
 
 ## 71. overwrite Create method in patient model
 
@@ -1740,9 +1748,25 @@ def create(self, vals_list):
     return super(HospitalPatient, self).create(vals_list)
 ```
 
+or to avoid losing one of sequence
+
+```py
+@api.model
+def create(self, vals_list):
+    curr_seq = self.env['ir.sequence'].next_by_code('hospital.patient')
+    print("Odoo Metes are the best", curr_seq)
+    vals_list['ref'] = curr_seq
+    return super(HospitalPatient, self).create(vals_list)
+```
+
 ## 73. overwrite Write method/ Edit data of a patient
 
-NOTICE: `vals.get('ref')` to allow entering a value to ref filed. `self.ref==False` the value in the DB is empty, `vals.get('ref')====False` the value of the filed passed to the DB is empty. vals in write method differ form create method, which it contain only the changed fields.
+WHAT WE WILL BE DOING: if a record does not have a `ref` value and got updated, give it a `ref` value
+
+NOTICE: `vals.get('ref')` to allow entering a value to ref filed.
+* `self.ref==False` the value in the DB is empty, 
+* `vals.get('ref')==False` the value of the filed passed to the DB is empty.
+* `vals` in write method differ form create method, which it contain only the changed fields.
 
 ```py
 def write(self, vals):
@@ -1754,6 +1778,8 @@ def write(self, vals):
 ```
 
 ## 74. adding the date_cancel field and overwrite default_get method
+
+WHAT WE WILL BE DOING: Showing the current date in the `date_cancel` field, by overriding `default_get` method
 
 custom_addons\hospital\wizard\cancel_appointment.py
 
@@ -1782,9 +1808,11 @@ custom_addons\hospital\wizard\cancel_appointment_wizard.xml
   </group>
 ```
 
-## 75. name_get method
+## 75. name_get method, change the appearance of the patient model in the many2many fields
 
 how the model display its fields in many2one, the changes will done in patient.py and shown in appointment model, the model that uses the patient.py as many2one field
+
+in custom_addons\hospital\models\patient.py
 
 ```py
 def name_get(self):
@@ -1796,7 +1824,8 @@ def name_get(self):
     return [(record.id, "[%s] %s" % (record.ref, record.name)) for record in self]
 ```
 
-## 75.1. run odoo from terminal
+## Terminal Commands
+### 1. run odoo from terminal
 
 python_path odoo-bin_path -c odoo.conf_path
 
@@ -1818,7 +1847,7 @@ we could try
 
 `C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin --addons-path=C:\Users\bashr\odoo\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\custom_addons -r odoo -w odoo --db_host=localhost --db_port=5432 -p 8055`
 
-## 75.2. create odoo.conf from terminal
+### 2. create odoo.conf from terminal
 
 will add
 
@@ -1828,7 +1857,7 @@ will add
 
 `C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin --addons-path=C:\Users\bashr\odoo\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\addons,C:\Users\bashr\odoo\odoo\custom_addons -r odoo -w odoo --db_host=localhost --db_port=5432 -p 8055 --stop-after-init -s -c C:\Users\bashr\odoo\odoo\conf\testconf.conf`
 
-## 75.3. install model from CLI
+### 3. install model from CLI
 
 will add
 
@@ -1837,7 +1866,7 @@ will add
 
 `C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin -c C:\Users\bashr\odoo\odoo\odoo.conf -d odoo -i crm`
 
-## 75.4. fix Error no 98 Address Already In Use Error
+### 4. fix Error no 98 Address Already In Use Error
 
 that means that u have a process running on this port:
 
@@ -1849,7 +1878,7 @@ second solution (only Ubuntu/Linux):
 1. `ps aux||grep odoo`
 2. `sudo kill -9 :process_id`
 
-## 75.5. upgrade model from CLI
+### 5. upgrade model from CLI
 
 will add
 
@@ -1858,7 +1887,7 @@ will add
 
 `C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin -c C:\Users\bashr\odoo\odoo\odoo.conf -d odoo -u hospital`
 
-## 75.6. create database from CLI
+### 6. create database from CLI
 
 will add
 
@@ -1866,7 +1895,7 @@ will add
 
 `C:\python\python.exe C:\Users\bashr\odoo\odoo\odoo-bin -c C:\Users\bashr\odoo\odoo\odoo.conf -d odoo_test`
 
-## WIRED ERROR
+### WIRED ERROR
 
 for some reason when i tried to run odoo on the default port, 8069, did not work.
 
@@ -1874,7 +1903,30 @@ shows something like that: web.assets_common.min.js:4451 Uncaught (in promise) E
 
 changing the port solved the issue, I changed it to 80 instead of 8069.
 
-## 76. Menu And SubMenu Without Specifying Parent & play ground model
+## 76. Set a Menu hierarchy (Menu And SubMenu) Without Specifying Parent & play ground model
+
+### Menu hierarchy
+
+we can add to the root menu like this
+
+```xml
+   <menuitem id="menu_technical" name="Technical" parent='menu_hospital_main' sequence="110">
+        <menuitem id="menu_playground" name="Play Ground" action='action_playground' sequence="110"/>
+    </menuitem>
+```
+
+and we can add it as a main model like CRM or Sales
+
+```xml
+   <menuitem id="menu_technical" name="Technical" sequence="110">
+        <menuitem id="menu_playground" name="Play Ground" sequence="10">
+            <menuitem id="menu_playground2" name="Play Ground" action='action_playground' sequence="10">
+            </menuitem>
+        </menuitem>
+    </menuitem>
+```
+
+### Playground model
 
 1. my_model.py
 2. init file
@@ -1882,15 +1934,147 @@ changing the port solved the issue, I changed it to 80 instead of 8069.
 4. manifest file
 5. security
 
-we could to add the menu.xml but we added the menuitem in my_model_view.xml,
+in odoo_playground.py
 
-### menu & submenu
+```py
+from odoo import models, api, fields
+from odoo.tools.safe_eval import safe_eval
 
-if you did not specify the parent of the menu it will be added to the main, like hospital, sales and CRM
+
+class OdooPlayGround(models.Model):
+    _name = 'odoo.playground'
+    _description = 'Odoo PlayGround'
+
+    DEFAULT_ENV_VARIABLE = """ #WHATEVER WERE THERE.. \n\n"""
+    model_id = fields.Many2one(
+        comodel_name='ir.model',
+        string='Model',
+    )
+
+    code = fields.Text(
+        string='Code',
+        default=DEFAULT_ENV_VARIABLE
+    )
+
+    result = fields.Text(
+        string='Result',
+    )
+
+    def action_execute(self):
+        try:
+            if self.model_id:
+                model = self.env[self.model_id.model]
+            else:
+                model = self
+            self.result = safe_eval(self.code.strip(), {'self': model})
+        except Exception as e:
+            self.result = str(e)
+
+```
+
+in init.py
+
+```py
+from . import models, patient, appointment, patient_tag, odoo_playground
+```
+
+in odoo_playground_view.xml
+
+```xml
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="odoo_playground_view_form" model="ir.ui.view">
+        <field name="name">odoo.playground.view.form</field>
+        <field name="model">odoo.playgroundg</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <field name="model_id"/>
+                        <field name="code" widget="ace" options="{'mode': 'python'}"/>
+                    </group>
+                    <group>
+                        <button name="action_execute" string="Execute" type="object" class="btn-primary"/>
+                    </group>
+                    <group>
+                        <field name="result"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_playground" model="ir.actions.act_window">
+        <field name="name">Play Ground</field>
+        <field name="res_model">odoo.playgroundg</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="type">ir.actions.act_window</field>
+    </record>
+
+    <menuitem id="menu_technical" name="Technical" parent='menu_hospital_main' sequence="110">
+        <menuitem id="menu_playground" name="Play Ground" action='action_playground' sequence="110"/>
+    </menuitem>
+
+<!--    <menuitem id="menu_technical" name="Technical" sequence="110">-->
+<!--        <menuitem id="menu_playground" name="Play Ground" sequence="10">-->
+<!--            <menuitem id="menu_playground2" name="Play Ground" action='action_playground' sequence="10">-->
+<!--            </menuitem>-->
+<!--        </menuitem>-->
+<!--    </menuitem>-->
+
+</odoo>
+```
+
+in manifest.py
+
+```xml
+ # always loaded
+    'data': [
+        'security/ir.model.access.csv',
+        'data/patient_tag_data.xml',
+        'data/patient.tag.csv',
+        'data/sequence_data.xml',
+        'views/views.xml',
+        'wizard/cancel_appointment_wizard.xml',
+        'views/menu.xml',
+        'views/patient_view.xml',
+        'views/female_view.xml',
+        'views/appointment_view.xml',
+        'views/templates.xml',
+        'views/patient_tag_view.xml',
+        'views/odoo_playground_view.xml'
+    ],
+```
+
+**DO NOT FORGET** copying the security access
+
+
 
 ## 77. difference b/w the action windows types
 
-## 78.self & env
+1. current: like the patient model
+2. new: like wizards, the cancel appointment model
+3. inline: like the playground model
+
+* inline vs current: Current window, will have the discard and save buttons, etc. But, this inline will not
+
+in odoo_playground_view.xml
+
+```xml
+    <record id="action_playground" model="ir.actions.act_window">
+        <field name="name">Play Ground</field>
+        <field name="res_model">odoo.playgroundg</field>
+        <field name="view_mode">form</field>
+        <!-- <field name="target">inline</field> -->
+        <!-- <field name="target">new</field> -->
+        <field name="target">current</field>
+        <field name="type">ir.actions.act_window</field>
+    </record>
+```
+try and get it back to inline
+
+## self & env
 
 self is a record set, record set is an object we can access its inner values.
 
